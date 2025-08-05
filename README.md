@@ -6,7 +6,7 @@ A curated list of frameworks that combine **Large Language Models (LLMs)** with 
 
 ## 🧠 Code & Algorithm Discovery
 
-* **[FunSearch (DeepMind, 2024)](https://www.deepmind.com/blog/funsearch-evolving-mathematical-discoveries)** – Pairs an LLM with an evaluator to evolve code for open math and algorithm problems. Achieved new records in combinatorics and discovered high-performance heuristics.
+* **[FunSearch (DeepMind, 2024)](https://deepmind.google/discover/blog/funsearch-making-new-discoveries-in-mathematical-sciences-using-large-language-models/)** – Pairs an LLM with an evaluator to evolve code for open math and algorithm problems. Achieved new records in combinatorics and discovered high-performance heuristics.
 
 * **[AlphaEvolve (DeepMind, 2025)](https://deepmind.google/discover/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/)** – Gemini-based LLM agent that evolves entire programs, outperforming previous algorithm benchmarks, including a breakthrough in matrix multiplication.
 
@@ -14,17 +14,19 @@ A curated list of frameworks that combine **Large Language Models (LLMs)** with 
 
 * **[Evolution of Heuristics (EoH)](https://github.com/FeiLiu36/EoH)** – Evolves natural-language 'thoughts' and corresponding heuristics with an LLM loop. Beats previous methods on combinatorial optimization problems.
 
-* **[ReEvo](https://arxiv.org/abs/2404.15230)** – Reflective evolution loop where the LLM both mutates and critiques heuristic strategies, leading to general-purpose solvers.
+* **[ReEvo](https://arxiv.org/abs/2402.01145v3)** – Reflective evolution loop where the LLM both mutates and critiques heuristic strategies, leading to general-purpose solvers.
 
-* **[LLaMEA](https://arxiv.org/abs/2309.07347)** – Uses GPT-4 to iteratively evolve optimization algorithm code; beats classic optimizers on benchmark suites.
+* **[LLaMEA](https://github.com/XAI-liacs/LLaMEA)** – Uses GPT-4 to iteratively evolve optimization algorithm code; beats classic optimizers on benchmark suites.
 
-* **[MPaGE](https://arxiv.org/abs/2507.20923)** – Evolves diverse multi-objective heuristics guided by a Pareto grid. Achieves strong performance across several domains.
+* **[MPaGE](https://arxiv.org/abs/2507.20923v1)** – Evolves diverse multi-objective heuristics guided by a Pareto grid. Achieves strong performance across several domains.
 
 * **[SOAR](https://github.com/flowersteam/SOAR)** – Self-improving LLM that fine-tunes itself from successful generations. Dominates ARC symbolic reasoning benchmark.
 
-* **[LLM4EC](https://github.com/wuxingyu-ai/LLM4EC)** – Community-sourced list of all papers at the intersection of LLMs and Evolutionary Computation.
-
 * **[LAEA](https://github.com/hhyqhh/LAEA)** – Zero-shot LLMs act as surrogate models to rank solutions, replacing learned predictors in classic EA.
+
+### A roundup of lots of other papers
+
+* **[LLM4EC](https://github.com/wuxingyu-ai/LLM4EC)** – Community-sourced list of all papers at the intersection of LLMs and Evolutionary Computation.
 
 ---
 
@@ -34,7 +36,7 @@ A curated list of frameworks that combine **Large Language Models (LLMs)** with 
 
 * **[MC-DML](https://textgamer.github.io/mc-dml/)** – Dynamic memory + GPT integrated into MCTS for interactive fiction. Significantly boosts single-shot win rates.
 
-* **[LERO](https://arxiv.org/abs/2406.07700)** – Evolves reward shaping functions and partial observation strategies in multi-agent RL with GPT assistance.
+* **[LERO](https://arxiv.org/abs/2503.21807v1)** – Evolves reward shaping functions and partial observation strategies in multi-agent RL with GPT assistance.
 
 * **[Voyager](https://github.com/MineDojo/Voyager)** – GPT-4 powered autonomous Minecraft agent that iteratively improves its own skills and codebase.
 
@@ -56,11 +58,11 @@ A curated list of frameworks that combine **Large Language Models (LLMs)** with 
 
 * **[MOLLEO](https://github.com/zoom-wang112358/MOLLEO)** – GPT-4 proposes chemical modifications as evolutionary mutations. Strong results on drug design and property optimization.
 
-* **[MOLLM](https://arxiv.org/abs/2310.20565)** – LLM framework for multi-objective molecule generation using in-context experience replay.
+* **[MOLLM](https://arxiv.org/abs/2502.12845v2)** – LLM framework for multi-objective molecule generation using in-context experience replay.
 
 * **[MultiMol](https://github.com/jiajunyu1999/LLM4Drug)** – Two-agent LLM architecture: one learns from data, one reads literature to guide mutation of drug candidates.
 
-* **[LLM-Evolver for Polymers](https://www.nature.com/articles/s41524-024-01225-5)** – Claude-3.5 driven optimizer outperforms traditional Bayesian methods for designing polymer sequences.
+* **[LLM-Evolver for Polymers](https://www.youtube.com/watch?v=_owRHzenX-8)** – Claude-3.5 driven optimizer outperforms traditional Bayesian methods for designing polymer sequences.
 
 * **[ChemLatica](https://openreview.net/forum?id=jC9D4cKhfu)** – Family of small chemistry LLMs trained on 100M property-labeled molecules. Combines with evolutionary prompts.
 
