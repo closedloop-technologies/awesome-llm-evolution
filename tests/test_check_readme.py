@@ -15,6 +15,14 @@ def test_canonical_url_preserves_meaningful_query_parameters():
     )
 
 
+def test_canonical_url_removes_default_ports():
+    assert canonical_url("https://Example.com:443/project/") == "https://example.com/project"
+
+
+def test_canonical_url_preserves_non_default_ports():
+    assert canonical_url("https://example.com:8443/project") == "https://example.com:8443/project"
+
+
 def test_canonical_title_ignores_case_and_extra_spaces():
     assert canonical_title("  Alpha   Evolve ") == "alpha evolve"
 

@@ -58,6 +58,13 @@ def github_anchor(heading: str) -> str:
 
 def canonical_url(url: str) -> str:
     parsed = urlsplit(url)
+    try:
+        port = parsed.port
+    except ValueError:
+        port = None
+    hostname = parsed.hostname.casefold() if parsed.hostname else parsed.netloc.casefold()
+    default_port = (parsed.scheme.casefold(), port) in {("http", 80), ("https", 443)}
+    netloc = hostname if port is None or default_port else f"{hostname}:{port}"
     filtered_query = [
         (key, value)
         for key, value in parse_qsl(parsed.query, keep_blank_values=True)
@@ -68,7 +75,7 @@ def canonical_url(url: str) -> str:
     return urlunsplit(
         (
             parsed.scheme.casefold(),
-            parsed.netloc.casefold(),
+            netloc,
             path,
             urlencode(sorted(filtered_query)),
             "",
