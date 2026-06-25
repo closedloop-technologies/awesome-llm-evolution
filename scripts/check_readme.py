@@ -94,6 +94,12 @@ def main() -> int:
     duplicates = sorted(url for url, count in Counter(urls).items() if count > 1)
     if duplicates:
         fail(f"duplicate URLs: {', '.join(duplicates)}")
+    resource_titles = [title for title, url in links if "awesome.re/badge.svg" not in url]
+    duplicate_titles = sorted(
+        title for title, count in Counter(resource_titles).items() if count > 1
+    )
+    if duplicate_titles:
+        fail(f"duplicate linked titles: {', '.join(duplicate_titles)}")
 
     for index, line in enumerate(lines, start=1):
         if line.startswith("- [") and "](#" not in line and not ENTRY_RE.match(line):
