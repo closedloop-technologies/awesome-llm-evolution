@@ -88,6 +88,10 @@ def canonical_title(title: str) -> str:
     return " ".join(title.split()).casefold()
 
 
+def has_normalized_inline_whitespace(value: str) -> bool:
+    return value == " ".join(value.split())
+
+
 def is_canonical_resource_url(url: str) -> bool:
     return url == canonical_url(url)
 
@@ -262,10 +266,14 @@ def main() -> int:
                 fail(f"line {index} uses a non-HTTPS resource URL: {url}")
             if title != title.strip():
                 fail(f"line {index} has an untrimmed linked title")
+            if not has_normalized_inline_whitespace(title):
+                fail(f"line {index} has repeated whitespace in linked title")
             if len(title) > MAX_TITLE_LENGTH:
                 fail(f"line {index} has an overlong linked title")
             if description != description.strip():
                 fail(f"line {index} has an untrimmed entry description")
+            if not has_normalized_inline_whitespace(description):
+                fail(f"line {index} has repeated whitespace in entry description")
             if len(description) > MAX_DESCRIPTION_LENGTH:
                 fail(f"line {index} has an overlong entry description")
             if is_placeholder_host(url_host(url)):
