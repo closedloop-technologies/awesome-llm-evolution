@@ -14,6 +14,7 @@ from scripts.check_readme import (
     has_encoded_url_path_separator,
     has_trailing_whitespace,
     has_url_credentials,
+    has_url_current_directory_reference,
     has_url_host,
     has_url_path_backslash,
     has_url_parent_directory_reference,
@@ -182,6 +183,12 @@ def test_has_url_parent_directory_reference_rejects_path_traversal():
     assert not has_url_parent_directory_reference("https://example.com/project/readme")
     assert has_url_parent_directory_reference("https://example.com/../project")
     assert has_url_parent_directory_reference("https://example.com/%2e%2e/project")
+
+
+def test_has_url_current_directory_reference_rejects_noncanonical_segments():
+    assert not has_url_current_directory_reference("https://example.com/project/readme")
+    assert has_url_current_directory_reference("https://example.com/./project")
+    assert has_url_current_directory_reference("https://example.com/%2e/project")
 
 
 def test_has_valid_url_port_rejects_malformed_ports():

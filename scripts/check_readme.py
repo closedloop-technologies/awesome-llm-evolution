@@ -169,6 +169,10 @@ def has_url_parent_directory_reference(url: str) -> bool:
     return ".." in Path(unquote(urlsplit(url).path)).parts
 
 
+def has_url_current_directory_reference(url: str) -> bool:
+    return "." in unquote(urlsplit(url).path).split("/")
+
+
 def is_placeholder_host(host: str) -> bool:
     return host in PLACEHOLDER_HOSTS or any(
         host.endswith(f".{placeholder}") for placeholder in PLACEHOLDER_HOSTS
@@ -378,6 +382,8 @@ def main() -> int:
                 fail(f"line {index} has a resource URL with encoded path separators: {url}")
             if has_url_parent_directory_reference(url):
                 fail(f"line {index} has a resource URL with parent directory references: {url}")
+            if has_url_current_directory_reference(url):
+                fail(f"line {index} has a resource URL with current directory references: {url}")
             if title != title.strip():
                 fail(f"line {index} has an untrimmed linked title")
             if not has_normalized_inline_whitespace(title):
