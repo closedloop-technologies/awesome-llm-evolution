@@ -41,6 +41,10 @@ def test_canonical_url_removes_default_ports():
     assert canonical_url("https://Example.com:443/project/") == "https://example.com/project"
 
 
+def test_canonical_url_removes_trailing_host_dot():
+    assert canonical_url("https://Docs.Example.com./project/") == "https://docs.example.com/project"
+
+
 def test_canonical_url_preserves_non_default_ports():
     assert canonical_url("https://example.com:8443/project") == "https://example.com:8443/project"
 
@@ -167,6 +171,7 @@ def test_has_valid_url_port_rejects_malformed_ports():
 
 def test_is_placeholder_host_rejects_example_subdomains():
     assert is_placeholder_host("docs.example.com")
+    assert is_placeholder_host(url_host("https://docs.example.com./project"))
 
 
 def test_is_placeholder_host_accepts_real_hosts():

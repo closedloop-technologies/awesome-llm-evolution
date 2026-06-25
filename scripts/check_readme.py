@@ -77,7 +77,11 @@ def canonical_url(url: str) -> str:
         port = parsed.port
     except ValueError:
         port = None
-    hostname = parsed.hostname.casefold() if parsed.hostname else parsed.netloc.casefold()
+    hostname = (
+        parsed.hostname.rstrip(".").casefold()
+        if parsed.hostname
+        else parsed.netloc.rstrip(".").casefold()
+    )
     default_port = (parsed.scheme.casefold(), port) in {("http", 80), ("https", 443)}
     netloc = hostname if port is None or default_port else f"{hostname}:{port}"
     filtered_query = [
@@ -123,7 +127,7 @@ def is_canonical_resource_url(url: str) -> bool:
 
 
 def url_host(url: str) -> str:
-    return (urlsplit(url).hostname or "").casefold()
+    return (urlsplit(url).hostname or "").rstrip(".").casefold()
 
 
 def has_valid_url_port(url: str) -> bool:
