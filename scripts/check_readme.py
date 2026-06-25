@@ -136,6 +136,24 @@ def main() -> int:
     if empty_sections:
         fail(f"sections without resource entries: {', '.join(empty_sections)}")
 
+    current_subsection = None
+    subsection_entries: dict[str, int] = {}
+    for line in lines:
+        if line.startswith("## "):
+            current_subsection = None
+            continue
+        if line.startswith("### "):
+            current_subsection = line.removeprefix("### ").strip()
+            subsection_entries[current_subsection] = 0
+            continue
+        if current_subsection and ENTRY_LINK_RE.match(line):
+            subsection_entries[current_subsection] += 1
+    empty_subsections = [
+        subsection for subsection, count in subsection_entries.items() if count == 0
+    ]
+    if empty_subsections:
+        fail(f"subsections without resource entries: {', '.join(empty_subsections)}")
+
     links = LINK_RE.findall(text)
     urls = [url for _, url in links if "awesome.re/badge.svg" not in url]
     canonical_urls = [canonical_url(url) for url in urls]
