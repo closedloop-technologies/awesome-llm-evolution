@@ -16,6 +16,7 @@ ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https?://[^)]+\) - (.+)\.$")
 ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
+MAX_DESCRIPTION_LENGTH = 180
 
 
 def fail(message: str) -> None:
@@ -102,6 +103,8 @@ def main() -> int:
                 fail(f"line {index} has an untrimmed linked title")
             if description != description.strip():
                 fail(f"line {index} has an untrimmed entry description")
+            if len(description) > MAX_DESCRIPTION_LENGTH:
+                fail(f"line {index} has an overlong entry description")
     duplicates = sorted(url for url, count in Counter(urls).items() if count > 1)
     if duplicates:
         fail(f"duplicate URLs: {', '.join(duplicates)}")
