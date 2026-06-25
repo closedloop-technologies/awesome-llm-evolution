@@ -154,6 +154,15 @@ def main() -> int:
     if empty_subsections:
         fail(f"subsections without resource entries: {', '.join(empty_subsections)}")
 
+    current_resource_section = None
+    for index, line in enumerate(lines, start=1):
+        if line.startswith("## "):
+            heading = line.removeprefix("## ").strip()
+            current_resource_section = None if heading == "Contents" else heading
+            continue
+        if ENTRY_LINK_RE.match(line) and current_resource_section is None:
+            fail(f"line {index} has a resource entry outside a category section")
+
     links = LINK_RE.findall(text)
     urls = [url for _, url in links if "awesome.re/badge.svg" not in url]
     canonical_urls = [canonical_url(url) for url in urls]
