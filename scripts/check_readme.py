@@ -14,12 +14,18 @@ AGENTS = Path("AGENTS.md")
 LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
 ENTRY_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(https?://[^)]+\) - .+\.$")
 ENTRY_RE = re.compile(r"^- \[[^\]]+\]\(https?://[^)]+\) - .+\.$")
+CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 
 
 def fail(message: str) -> None:
     print(f"FAIL\t{message}")
     raise SystemExit(1)
+
+
+def github_anchor(heading: str) -> str:
+    normalized = re.sub(r"[^a-z0-9 -]", "", heading.casefold())
+    return normalized.replace(" ", "-")
 
 
 def main() -> int:
@@ -43,9 +49,18 @@ def main() -> int:
         for line in lines
         if line.startswith("## ") and line.strip() not in {"## Contents"}
     ]
-    for heading in h2_headings:
-        if f"[{heading}]" not in text:
+    heading_anchors = {github_anchor(heading): heading for heading in h2_headings}
+    contents_anchors = {}
+    for line in lines:
+        match = CONTENTS_LINK_RE.match(line)
+        if match:
+            contents_anchors[match.group(2)] = match.group(1)
+    for anchor, heading in heading_anchors.items():
+        if anchor not in contents_anchors:
             fail(f"Contents is missing heading: {heading}")
+    for anchor, title in contents_anchors.items():
+        if anchor not in heading_anchors:
+            fail(f"Contents link has no matching heading: {title}")
 
     links = LINK_RE.findall(text)
     urls = [url for _, url in links if "awesome.re/badge.svg" not in url]
