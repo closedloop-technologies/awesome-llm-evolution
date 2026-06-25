@@ -156,6 +156,10 @@ def has_encoded_url_control_character(url: str) -> bool:
     return any(ord(character) < 32 or ord(character) == 127 for character in decoded)
 
 
+def has_url_parent_directory_reference(url: str) -> bool:
+    return ".." in Path(unquote(urlsplit(url).path)).parts
+
+
 def is_placeholder_host(host: str) -> bool:
     return host in PLACEHOLDER_HOSTS or any(
         host.endswith(f".{placeholder}") for placeholder in PLACEHOLDER_HOSTS
@@ -359,6 +363,8 @@ def main() -> int:
                 fail(f"line {index} has a resource URL with whitespace: {url}")
             if has_encoded_url_control_character(url):
                 fail(f"line {index} has a resource URL with encoded control characters: {url}")
+            if has_url_parent_directory_reference(url):
+                fail(f"line {index} has a resource URL with parent directory references: {url}")
             if title != title.strip():
                 fail(f"line {index} has an untrimmed linked title")
             if not has_normalized_inline_whitespace(title):

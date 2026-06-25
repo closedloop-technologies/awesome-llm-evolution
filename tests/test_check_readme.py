@@ -14,6 +14,7 @@ from scripts.check_readme import (
     has_trailing_whitespace,
     has_url_credentials,
     has_url_host,
+    has_url_parent_directory_reference,
     has_url_whitespace,
     has_valid_url_port,
     is_placeholder_host,
@@ -162,6 +163,12 @@ def test_has_encoded_url_control_character_rejects_percent_encoded_controls():
     assert not has_encoded_url_control_character("https://example.com/project")
     assert has_encoded_url_control_character("https://example.com/project%00name")
     assert has_encoded_url_control_character("https://example.com/project%7fname")
+
+
+def test_has_url_parent_directory_reference_rejects_path_traversal():
+    assert not has_url_parent_directory_reference("https://example.com/project/readme")
+    assert has_url_parent_directory_reference("https://example.com/../project")
+    assert has_url_parent_directory_reference("https://example.com/%2e%2e/project")
 
 
 def test_has_valid_url_port_rejects_malformed_ports():
