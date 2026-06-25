@@ -12,7 +12,7 @@ from pathlib import Path
 README = Path("README.md")
 AGENTS = Path("AGENTS.md")
 LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
-ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https?://[^)]+\) - (.+)\.$")
+ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https://[^)]+\) - (.+)\.$")
 ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
