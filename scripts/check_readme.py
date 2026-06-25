@@ -7,7 +7,7 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, unquote, urlencode, urlsplit, urlunsplit
 
 
 README = Path("README.md")
@@ -145,6 +145,11 @@ def has_url_credentials(url: str) -> bool:
 
 def has_url_whitespace(url: str) -> bool:
     return any(character.isspace() for character in url)
+
+
+def has_encoded_url_control_character(url: str) -> bool:
+    decoded = unquote(url)
+    return any(ord(character) < 32 or ord(character) == 127 for character in decoded)
 
 
 def is_placeholder_host(host: str) -> bool:
@@ -348,6 +353,8 @@ def main() -> int:
                 fail(f"line {index} uses a non-HTTPS resource URL: {url}")
             if has_url_whitespace(url):
                 fail(f"line {index} has a resource URL with whitespace: {url}")
+            if has_encoded_url_control_character(url):
+                fail(f"line {index} has a resource URL with encoded control characters: {url}")
             if title != title.strip():
                 fail(f"line {index} has an untrimmed linked title")
             if not has_normalized_inline_whitespace(title):

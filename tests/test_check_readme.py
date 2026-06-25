@@ -10,6 +10,7 @@ from scripts.check_readme import (
     has_descriptive_link_title,
     has_noncanonical_horizontal_rule,
     has_normalized_inline_whitespace,
+    has_encoded_url_control_character,
     has_trailing_whitespace,
     has_url_credentials,
     has_url_host,
@@ -151,6 +152,12 @@ def test_has_url_whitespace_rejects_literal_spaces_and_tabs():
     assert not has_url_whitespace("https://example.com/project")
     assert has_url_whitespace("https://example.com/project name")
     assert has_url_whitespace("https://example.com/project\tname")
+
+
+def test_has_encoded_url_control_character_rejects_percent_encoded_controls():
+    assert not has_encoded_url_control_character("https://example.com/project")
+    assert has_encoded_url_control_character("https://example.com/project%00name")
+    assert has_encoded_url_control_character("https://example.com/project%7fname")
 
 
 def test_has_valid_url_port_rejects_malformed_ports():
