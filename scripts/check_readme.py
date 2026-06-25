@@ -49,6 +49,13 @@ def main() -> int:
         for line in lines
         if line.startswith("## ") and line.strip() not in {"## Contents"}
     ]
+    heading_anchor_counts = Counter(github_anchor(heading) for heading in h2_headings)
+    duplicate_heading_anchors = sorted(
+        anchor for anchor, count in heading_anchor_counts.items() if count > 1
+    )
+    if duplicate_heading_anchors:
+        fail(f"duplicate section anchors: {', '.join(duplicate_heading_anchors)}")
+
     heading_anchors = {github_anchor(heading): heading for heading in h2_headings}
     contents_anchors = {}
     for line in lines:
@@ -61,6 +68,19 @@ def main() -> int:
     for anchor, title in contents_anchors.items():
         if anchor not in heading_anchors:
             fail(f"Contents link has no matching heading: {title}")
+
+    current_section = None
+    section_entries: dict[str, int] = {}
+    for line in lines:
+        if line.startswith("## ") and line.strip() not in {"## Contents"}:
+            current_section = line.removeprefix("## ").strip()
+            section_entries[current_section] = 0
+            continue
+        if current_section and ENTRY_LINK_RE.match(line):
+            section_entries[current_section] += 1
+    empty_sections = [section for section, count in section_entries.items() if count == 0]
+    if empty_sections:
+        fail(f"sections without resource entries: {', '.join(empty_sections)}")
 
     links = LINK_RE.findall(text)
     urls = [url for _, url in links if "awesome.re/badge.svg" not in url]
