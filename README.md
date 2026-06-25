@@ -16,11 +16,11 @@ A curated list of frameworks that combine **Large Language Models (LLMs)** with 
 
 ## 🧠 Code & Algorithm Discovery
 
-- [AlphaEvolve (DeepMind, 2025)](https://deepmind.google/discover/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/) - Gemini-based LLM agent that evolves entire programs, outperforming previous algorithm benchmarks, including a breakthrough in matrix multiplication.
+- [AlphaEvolve (DeepMind, 2025)](https://deepmind.google/discover/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms) - Gemini-based LLM agent that evolves entire programs, outperforming previous algorithm benchmarks, including a breakthrough in matrix multiplication.
 
 - [Evolution of Heuristics (EoH)](https://github.com/FeiLiu36/EoH) - Evolves natural-language 'thoughts' and corresponding heuristics with an LLM loop. Beats previous methods on combinatorial optimization problems.
 
-- [FunSearch (DeepMind, 2024)](https://deepmind.google/discover/blog/funsearch-making-new-discoveries-in-mathematical-sciences-using-large-language-models/) - Pairs an LLM with an evaluator to evolve code for open math and algorithm problems. Achieved new records in combinatorics and discovered high-performance heuristics.
+- [FunSearch (DeepMind, 2024)](https://deepmind.google/discover/blog/funsearch-making-new-discoveries-in-mathematical-sciences-using-large-language-models) - Pairs an LLM with an evaluator to evolve code for open math and algorithm problems. Achieved new records in combinatorics and discovered high-performance heuristics.
 
 - [LAEA](https://github.com/hhyqhh/LAEA) - Zero-shot LLMs act as surrogate models to rank solutions, replacing learned predictors in classic EA.
 
@@ -46,7 +46,7 @@ A curated list of frameworks that combine **Large Language Models (LLMs)** with 
 
 - [LLM-MCTS](https://github.com/1989Ryan/llm-mcts) - GPT-4 guides Monte Carlo Tree Search for high-level planning in robotics and games.
 
-- [MC-DML](https://textgamer.github.io/mc-dml/) - Dynamic memory + GPT integrated into MCTS for interactive fiction. Significantly boosts single-shot win rates.
+- [MC-DML](https://textgamer.github.io/mc-dml) - Dynamic memory + GPT integrated into MCTS for interactive fiction. Significantly boosts single-shot win rates.
 
 - [Tree-of-Thoughts](https://arxiv.org/abs/2305.10601) - Search-based reasoning framework that treats LLM generations as a search tree of "thoughts".
 

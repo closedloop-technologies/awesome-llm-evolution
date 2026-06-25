@@ -80,6 +80,10 @@ def canonical_title(title: str) -> str:
     return " ".join(title.split()).casefold()
 
 
+def is_canonical_resource_url(url: str) -> bool:
+    return url == canonical_url(url)
+
+
 def url_host(url: str) -> str:
     match = re.match(r"https?://([^/?#]+)", url)
     return match.group(1).casefold() if match else ""
@@ -216,6 +220,8 @@ def main() -> int:
                 fail(f"line {index} has an overlong entry description")
             if url_host(url) in PLACEHOLDER_HOSTS:
                 fail(f"line {index} uses a placeholder URL host: {url_host(url)}")
+            if not is_canonical_resource_url(url):
+                fail(f"line {index} has a non-canonical resource URL: {url}")
     duplicates = sorted(
         url for url, count in Counter(canonical_urls).items() if count > 1
     )

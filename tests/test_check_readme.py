@@ -1,4 +1,4 @@
-from scripts.check_readme import canonical_title, canonical_url
+from scripts.check_readme import canonical_title, canonical_url, is_canonical_resource_url
 
 
 def test_canonical_url_ignores_tracking_parameters_and_fragments():
@@ -21,3 +21,13 @@ def test_canonical_title_ignores_case_and_extra_spaces():
 
 def test_canonical_title_preserves_meaningful_words():
     assert canonical_title("Tree-of-Thoughts") == "tree-of-thoughts"
+
+
+def test_is_canonical_resource_url_accepts_normalized_urls():
+    assert is_canonical_resource_url("https://example.com/project?a=1&b=2")
+
+
+def test_is_canonical_resource_url_rejects_tracking_and_fragments():
+    assert not is_canonical_resource_url(
+        "https://Example.com/project/?utm_source=newsletter#readme"
+    )
