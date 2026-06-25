@@ -29,6 +29,10 @@ def github_anchor(heading: str) -> str:
     return normalized.replace(" ", "-")
 
 
+def canonical_url(url: str) -> str:
+    return url.rstrip("/")
+
+
 def main() -> int:
     text = README.read_text(encoding="utf-8")
     lines = text.splitlines()
@@ -92,6 +96,7 @@ def main() -> int:
 
     links = LINK_RE.findall(text)
     urls = [url for _, url in links if "awesome.re/badge.svg" not in url]
+    canonical_urls = [canonical_url(url) for url in urls]
     for index, line in enumerate(lines, start=1):
         if "](http" in line and "https://awesome.re/badge.svg" not in line:
             if not ENTRY_RE.match(line):
@@ -105,7 +110,9 @@ def main() -> int:
                 fail(f"line {index} has an untrimmed entry description")
             if len(description) > MAX_DESCRIPTION_LENGTH:
                 fail(f"line {index} has an overlong entry description")
-    duplicates = sorted(url for url, count in Counter(urls).items() if count > 1)
+    duplicates = sorted(
+        url for url, count in Counter(canonical_urls).items() if count > 1
+    )
     if duplicates:
         fail(f"duplicate URLs: {', '.join(duplicates)}")
     resource_titles = [title for title, url in links if "awesome.re/badge.svg" not in url]
