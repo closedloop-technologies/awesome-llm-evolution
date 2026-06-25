@@ -15,6 +15,7 @@ from scripts.check_readme import (
     has_trailing_whitespace,
     has_url_credentials,
     has_url_host,
+    has_url_path_backslash,
     has_url_parent_directory_reference,
     has_url_whitespace,
     has_valid_url_port,
@@ -170,6 +171,11 @@ def test_has_encoded_url_path_separator_rejects_encoded_slashes_and_backslashes(
     assert not has_encoded_url_path_separator("https://example.com/project/readme")
     assert has_encoded_url_path_separator("https://example.com/project%2Freadme")
     assert has_encoded_url_path_separator("https://example.com/project%5creadme")
+
+
+def test_has_url_path_backslash_rejects_literal_backslashes():
+    assert not has_url_path_backslash("https://example.com/project/readme")
+    assert has_url_path_backslash("https://example.com/project\\readme")
 
 
 def test_has_url_parent_directory_reference_rejects_path_traversal():
