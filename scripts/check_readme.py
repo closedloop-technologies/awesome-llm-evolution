@@ -133,6 +133,10 @@ def has_bare_http_url(line: str) -> bool:
     return False
 
 
+def duplicate_values(values: list[str]) -> list[str]:
+    return sorted(value for value, count in Counter(values).items() if count > 1)
+
+
 def h1_headings(lines: list[str]) -> list[str]:
     return [line.removeprefix("# ").strip() for line in lines if line.startswith("# ")]
 
@@ -209,6 +213,12 @@ def main() -> int:
         if match:
             contents_entries.append((match.group(1), match.group(2)))
     contents_anchors = {anchor: title for title, anchor in contents_entries}
+    duplicate_contents_anchors = duplicate_values([anchor for _, anchor in contents_entries])
+    if duplicate_contents_anchors:
+        fail(f"duplicate Contents anchors: {', '.join(duplicate_contents_anchors)}")
+    duplicate_contents_titles = duplicate_values([title for title, _ in contents_entries])
+    if duplicate_contents_titles:
+        fail(f"duplicate Contents titles: {', '.join(duplicate_contents_titles)}")
     for anchor, heading in heading_anchors.items():
         if anchor not in contents_anchors:
             fail(f"Contents is missing heading: {heading}")

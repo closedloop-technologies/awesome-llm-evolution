@@ -2,6 +2,7 @@ from scripts.check_readme import (
     ENTRY_RE,
     canonical_title,
     canonical_url,
+    duplicate_values,
     github_anchor,
     h1_headings,
     has_bare_http_url,
@@ -46,6 +47,10 @@ def test_canonical_title_ignores_case_and_extra_spaces():
 
 def test_canonical_title_preserves_meaningful_words():
     assert canonical_title("Tree-of-Thoughts") == "tree-of-thoughts"
+
+
+def test_duplicate_values_returns_sorted_repeated_values():
+    assert duplicate_values(["b", "a", "b", "c", "a", "b"]) == ["a", "b"]
 
 
 def test_has_normalized_inline_whitespace_rejects_repeated_spaces():
