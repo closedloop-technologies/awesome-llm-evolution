@@ -10,6 +10,7 @@ from scripts.check_readme import (
     has_noncanonical_horizontal_rule,
     has_normalized_inline_whitespace,
     has_trailing_whitespace,
+    has_url_credentials,
     has_url_host,
     has_valid_url_port,
     is_placeholder_host,
@@ -125,6 +126,12 @@ def test_url_host_ignores_ports_for_placeholder_host_detection():
 def test_has_url_host_rejects_hostless_urls():
     assert has_url_host("https://example.com/project")
     assert not has_url_host("https:///project")
+
+
+def test_has_url_credentials_rejects_embedded_credentials():
+    assert not has_url_credentials("https://example.com/project")
+    assert has_url_credentials("https://user@example.com/project")
+    assert has_url_credentials("https://user:token@example.com/project")
 
 
 def test_has_valid_url_port_rejects_malformed_ports():

@@ -120,6 +120,11 @@ def has_url_host(url: str) -> bool:
     return bool(url_host(url))
 
 
+def has_url_credentials(url: str) -> bool:
+    parsed = urlsplit(url)
+    return parsed.username is not None or parsed.password is not None
+
+
 def is_placeholder_host(host: str) -> bool:
     return host in PLACEHOLDER_HOSTS or any(
         host.endswith(f".{placeholder}") for placeholder in PLACEHOLDER_HOSTS
@@ -336,6 +341,8 @@ def main() -> int:
                 fail(f"line {index} has a resource URL without a host: {url}")
             if not has_valid_url_port(url):
                 fail(f"line {index} has a resource URL with an invalid port: {url}")
+            if has_url_credentials(url):
+                fail(f"line {index} has a resource URL with embedded credentials: {url}")
             if is_placeholder_host(host):
                 fail(f"line {index} uses a placeholder URL host: {host}")
             if not is_canonical_resource_url(url):
