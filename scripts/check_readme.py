@@ -7,6 +7,7 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 
 README = Path("README.md")
@@ -18,6 +19,8 @@ ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 PLACEHOLDER_HOSTS = {"example.com", "example.org", "example.net"}
+TRACKING_QUERY_PARAMS = {"fbclid", "gclid", "igshid", "mc_cid", "mc_eid", "ref", "ref_src"}
+TRACKING_QUERY_PREFIXES = ("utm_",)
 MAX_TITLE_LENGTH = 80
 MAX_DESCRIPTION_LENGTH = 180
 SMALL_TITLE_WORDS = {
@@ -54,7 +57,23 @@ def github_anchor(heading: str) -> str:
 
 
 def canonical_url(url: str) -> str:
-    return url.rstrip("/")
+    parsed = urlsplit(url)
+    filtered_query = [
+        (key, value)
+        for key, value in parse_qsl(parsed.query, keep_blank_values=True)
+        if key.casefold() not in TRACKING_QUERY_PARAMS
+        and not key.casefold().startswith(TRACKING_QUERY_PREFIXES)
+    ]
+    path = parsed.path.rstrip("/") or "/"
+    return urlunsplit(
+        (
+            parsed.scheme.casefold(),
+            parsed.netloc.casefold(),
+            path,
+            urlencode(sorted(filtered_query)),
+            "",
+        )
+    ).rstrip("/")
 
 
 def url_host(url: str) -> str:
