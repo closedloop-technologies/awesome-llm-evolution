@@ -24,6 +24,20 @@ TRACKING_QUERY_PARAMS = {"fbclid", "gclid", "igshid", "mc_cid", "mc_eid", "ref",
 TRACKING_QUERY_PREFIXES = ("utm_",)
 MAX_TITLE_LENGTH = 80
 MAX_DESCRIPTION_LENGTH = 180
+GENERIC_LINK_TITLES = {
+    "article",
+    "blog post",
+    "code",
+    "demo",
+    "docs",
+    "github",
+    "paper",
+    "project",
+    "repository",
+    "repo",
+    "resource",
+    "website",
+}
 SMALL_TITLE_WORDS = {
     "a",
     "an",
@@ -86,6 +100,10 @@ def canonical_url(url: str) -> str:
 
 def canonical_title(title: str) -> str:
     return " ".join(title.split()).casefold()
+
+
+def has_descriptive_link_title(title: str) -> bool:
+    return canonical_title(title) not in GENERIC_LINK_TITLES
 
 
 def has_normalized_inline_whitespace(value: str) -> bool:
@@ -336,6 +354,8 @@ def main() -> int:
                 fail(f"line {index} has repeated whitespace in linked title")
             if len(title) > MAX_TITLE_LENGTH:
                 fail(f"line {index} has an overlong linked title")
+            if not has_descriptive_link_title(title):
+                fail(f"line {index} has a generic linked title: {title}")
             if description != description.strip():
                 fail(f"line {index} has an untrimmed entry description")
             if not has_normalized_inline_whitespace(description):
