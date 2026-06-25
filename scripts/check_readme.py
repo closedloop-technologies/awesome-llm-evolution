@@ -57,17 +57,24 @@ def main() -> int:
         fail(f"duplicate section anchors: {', '.join(duplicate_heading_anchors)}")
 
     heading_anchors = {github_anchor(heading): heading for heading in h2_headings}
-    contents_anchors = {}
+    contents_entries = []
     for line in lines:
         match = CONTENTS_LINK_RE.match(line)
         if match:
-            contents_anchors[match.group(2)] = match.group(1)
+            contents_entries.append((match.group(1), match.group(2)))
+    contents_anchors = {anchor: title for title, anchor in contents_entries}
     for anchor, heading in heading_anchors.items():
         if anchor not in contents_anchors:
             fail(f"Contents is missing heading: {heading}")
     for anchor, title in contents_anchors.items():
         if anchor not in heading_anchors:
             fail(f"Contents link has no matching heading: {title}")
+        if title != heading_anchors[anchor]:
+            fail(f"Contents title {title} does not match heading {heading_anchors[anchor]}")
+
+    expected_contents = [(heading, github_anchor(heading)) for heading in h2_headings]
+    if contents_entries != expected_contents:
+        fail("Contents section order does not match README section order")
 
     current_section = None
     section_entries: dict[str, int] = {}
