@@ -1,13 +1,17 @@
-# AGENTS.md — Awesome-* Repo Curation Guide
+# AGENTS.md - Awesome LLM Evolution Curation Guide
 
-This file defines the standards, checks, and stylistic conventions for maintaining this repository.  
-All contributions, whether made manually or via an agent, **must** follow these rules to preserve quality and taste.
+This file defines the standards, checks, and stylistic conventions for
+maintaining this repository. All contributions, whether made manually or via an
+agent, must follow these rules to preserve quality and taste.
 
 ---
 
 ## 1. Scope
 
-- This repository is an **Awesome List** for curated resources in the `[DOMAIN HERE]` space.
+- This repository is an Awesome List for curated resources at the intersection
+  of large language models, evolutionary algorithms, search-based
+  optimization, program synthesis, automated discovery, and prompt or policy
+  optimization.
 - It is **selective**, not exhaustive. Every item must be high-quality, actively maintained, and relevant to the scope.
 - Off-topic or low-quality entries will be declined.
 
@@ -20,12 +24,10 @@ All contributions, whether made manually or via an agent, **must** follow these 
 - **Short, descriptive annotations** explaining *why* the entry is worth including.
 - Logical **category groupings** with clear section headings.
 - **Table of Contents** at the top, linking to all major sections.
-- Consistent link formatting:  
+- Consistent link formatting:
 ```
-
-* [Project Name](https://link) — short description ending with a period.
-
-````
+- [Project Name](https://link) - short description ending with a period.
+```
 
 ### 🚫 Avoid
 - Random link dumps without context.
@@ -50,21 +52,18 @@ All contributions, whether made manually or via an agent, **must** follow these 
 
 ### Required Checks (run locally and in CI)
 ```bash
-# Install awesome-lint
-npm install --global awesome-lint
-
-# Run lint
-awesome-lint
-````
+python3 scripts/check_readme.py
+GITHUB_TOKEN="$(gh auth token)" npx --yes awesome-lint
+```
 
 Optional but recommended:
 
-* **Markdown Link Checker** to detect broken links:
+- **Markdown Link Checker** to detect broken links:
 
   ```bash
   npx markdown-link-check README.md
   ```
-* **Prettier** for consistent Markdown formatting:
+- **Prettier** for consistent Markdown formatting:
 
   ```bash
   npx prettier --check "**/*.md"
@@ -72,22 +71,22 @@ Optional but recommended:
 
 CI configuration:
 
-* Configure GitHub Actions to run `awesome-lint` and link checks on every PR.
-* Fail the build if there are formatting, linting, or broken link issues.
+- Configure GitHub Actions to run `awesome-lint` and link checks on every PR.
+- Fail the build if there are formatting, linting, or broken link issues.
 
 ---
 
 ## 5. Contribution Guidelines
 
-* **Read `CONTRIBUTING.md`** before opening a PR.
-* One PR per addition or major change.
-* Follow the established category structure — create new categories only if necessary.
-* Additions **must** include:
+- **Read `contributing.md`** before opening a PR.
+- One PR per addition or major change.
+- Follow the established category structure; create new categories only if necessary.
+- Additions **must** include:
 
   1. A link in `[Name](URL)` format.
   2. A concise description explaining why it’s awesome.
   3. Placement in the correct category.
-* Do not reorder unrelated entries unless alphabetizing.
+- Do not reorder unrelated entries unless alphabetizing.
 
 PR title format:
 
@@ -99,13 +98,13 @@ PR title format:
 
 ## 6. Tagging & Metadata
 
-* Keep repo description up to date.
-* Add relevant topics in GitHub settings:
+- Keep repo description up to date.
+- Add relevant topics in GitHub settings:
 
   ```
-  awesome, awesome-list, agents, llm, automation, [more domain-specific tags]
+  awesome, awesome-list, llm, evolutionary-algorithms, program-synthesis
   ```
-* Include the Awesome badge at the top of README:
+- Include the Awesome badge at the top of README:
 
   ```markdown
   [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
@@ -115,10 +114,10 @@ PR title format:
 
 ## 7. Quality & Maintenance
 
-* Review and prune outdated entries quarterly.
-* Check for broken links regularly (via CI or manual run).
-* Encourage community contributions but enforce curation standards.
-* Merge only after checks pass and content meets these guidelines.
+- Review and prune outdated entries quarterly.
+- Check for broken links regularly (via CI or manual run).
+- Encourage community contributions but enforce curation standards.
+- Merge only after checks pass and content meets these guidelines.
 
 ---
 
@@ -129,8 +128,8 @@ Before completing any PR:
 1. **Run all linters**:
 
    ```bash
-   awesome-lint
-   npx markdown-link-check README.md
+   python3 scripts/check_readme.py
+   GITHUB_TOKEN="$(gh auth token)" npx --yes awesome-lint
    ```
 2. Ensure no broken links.
 3. Ensure descriptions are present, concise, and follow style rules.
@@ -140,4 +139,3 @@ Before completing any PR:
 ---
 
 Maintaining an Awesome List is about taste, clarity, and discipline — keep it **curated, current, and clean**.
-

@@ -10,8 +10,10 @@ from pathlib import Path
 
 
 README = Path("README.md")
+AGENTS = Path("AGENTS.md")
 LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
 ENTRY_RE = re.compile(r"^- \[[^\]]+\]\(https?://[^)]+\) - .+\.$")
+PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 
 
 def fail(message: str) -> None:
@@ -28,6 +30,12 @@ def main() -> int:
 
     if "## Contents" not in text:
         fail("README is missing a Contents section")
+
+    if AGENTS.exists():
+        agents_text = AGENTS.read_text(encoding="utf-8")
+        for placeholder in PLACEHOLDERS:
+            if placeholder in agents_text:
+                fail(f"AGENTS.md still contains placeholder: {placeholder}")
 
     h2_headings = [
         line.removeprefix("## ").strip()
