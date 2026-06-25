@@ -108,6 +108,10 @@ def url_host(url: str) -> str:
     return (urlsplit(url).hostname or "").casefold()
 
 
+def has_url_host(url: str) -> bool:
+    return bool(url_host(url))
+
+
 def is_placeholder_host(host: str) -> bool:
     return host in PLACEHOLDER_HOSTS or any(
         host.endswith(f".{placeholder}") for placeholder in PLACEHOLDER_HOSTS
@@ -319,8 +323,11 @@ def main() -> int:
                 fail(f"line {index} has repeated whitespace in entry description")
             if len(description) > MAX_DESCRIPTION_LENGTH:
                 fail(f"line {index} has an overlong entry description")
-            if is_placeholder_host(url_host(url)):
-                fail(f"line {index} uses a placeholder URL host: {url_host(url)}")
+            host = url_host(url)
+            if not host:
+                fail(f"line {index} has a resource URL without a host: {url}")
+            if is_placeholder_host(host):
+                fail(f"line {index} uses a placeholder URL host: {host}")
             if not is_canonical_resource_url(url):
                 fail(f"line {index} has a non-canonical resource URL: {url}")
     duplicates = sorted(

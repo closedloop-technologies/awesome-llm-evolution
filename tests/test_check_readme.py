@@ -10,6 +10,7 @@ from scripts.check_readme import (
     has_noncanonical_horizontal_rule,
     has_normalized_inline_whitespace,
     has_trailing_whitespace,
+    has_url_host,
     is_placeholder_host,
     is_canonical_resource_url,
     is_title_case,
@@ -118,6 +119,11 @@ def test_has_bare_http_url_rejects_plain_urls():
 
 def test_url_host_ignores_ports_for_placeholder_host_detection():
     assert url_host("https://example.com:8443/project") == "example.com"
+
+
+def test_has_url_host_rejects_hostless_urls():
+    assert has_url_host("https://example.com/project")
+    assert not has_url_host("https:///project")
 
 
 def test_is_placeholder_host_rejects_example_subdomains():
