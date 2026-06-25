@@ -96,6 +96,12 @@ def url_host(url: str) -> str:
     return (urlsplit(url).hostname or "").casefold()
 
 
+def is_placeholder_host(host: str) -> bool:
+    return host in PLACEHOLDER_HOSTS or any(
+        host.endswith(f".{placeholder}") for placeholder in PLACEHOLDER_HOSTS
+    )
+
+
 def is_title_case(heading: str) -> bool:
     words = re.findall(r"[A-Za-z][A-Za-z0-9+-]*", heading)
     for index, word in enumerate(words):
@@ -236,7 +242,7 @@ def main() -> int:
                 fail(f"line {index} has an untrimmed entry description")
             if len(description) > MAX_DESCRIPTION_LENGTH:
                 fail(f"line {index} has an overlong entry description")
-            if url_host(url) in PLACEHOLDER_HOSTS:
+            if is_placeholder_host(url_host(url)):
                 fail(f"line {index} uses a placeholder URL host: {url_host(url)}")
             if not is_canonical_resource_url(url):
                 fail(f"line {index} has a non-canonical resource URL: {url}")

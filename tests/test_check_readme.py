@@ -3,6 +3,7 @@ from scripts.check_readme import (
     canonical_title,
     canonical_url,
     has_bare_http_url,
+    is_placeholder_host,
     is_canonical_resource_url,
     url_host,
 )
@@ -62,6 +63,14 @@ def test_has_bare_http_url_rejects_plain_urls():
 
 def test_url_host_ignores_ports_for_placeholder_host_detection():
     assert url_host("https://example.com:8443/project") == "example.com"
+
+
+def test_is_placeholder_host_rejects_example_subdomains():
+    assert is_placeholder_host("docs.example.com")
+
+
+def test_is_placeholder_host_accepts_real_hosts():
+    assert not is_placeholder_host("github.com")
 
 
 def test_entry_parser_accepts_http_urls_for_explicit_https_validation():
