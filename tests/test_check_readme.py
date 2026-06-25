@@ -23,6 +23,7 @@ from scripts.check_readme import (
     is_placeholder_host,
     is_canonical_resource_url,
     is_title_case,
+    markdown_spacing_violations,
     url_host,
 )
 
@@ -111,6 +112,49 @@ def test_contents_precedes_categories_requires_contents_first():
     assert contents_precedes_categories(["# Title", "## Contents", "## Category"])
     assert not contents_precedes_categories(["# Title", "## Category", "## Contents"])
     assert not contents_precedes_categories(["# Title", "## Category"])
+
+
+def test_markdown_spacing_accepts_spaced_resource_sections():
+    lines = [
+        "# Title",
+        "",
+        "## Category",
+        "",
+        "- [Project](https://example.com/project) - Description.",
+        "",
+        "- [Other](https://example.com/other) - Description.",
+    ]
+
+    assert markdown_spacing_violations(lines) == []
+
+
+def test_markdown_spacing_rejects_heading_without_blank_line():
+    lines = [
+        "# Title",
+        "## Category",
+        "",
+        "- [Project](https://example.com/project) - Description.",
+    ]
+
+    assert markdown_spacing_violations(lines) == [
+        "line 2 heading is missing a blank line before it"
+    ]
+
+
+def test_markdown_spacing_rejects_adjacent_resource_entries():
+    lines = [
+        "# Title",
+        "",
+        "## Category",
+        "",
+        "- [Project](https://example.com/project) - Description.",
+        "- [Other](https://example.com/other) - Description.",
+    ]
+
+    assert markdown_spacing_violations(lines) == [
+        "line 5 resource entry is missing a blank line after it",
+        "line 6 resource entry is missing a blank line before it",
+    ]
 
 
 def test_is_title_case_accepts_acronyms_and_small_words():

@@ -224,6 +224,31 @@ def contents_precedes_categories(lines: list[str]) -> bool:
     return first_category_index is None or contents_index < first_category_index
 
 
+def markdown_spacing_violations(lines: list[str]) -> list[str]:
+    violations = []
+    for index, line in enumerate(lines):
+        line_number = index + 1
+        previous_line = lines[index - 1] if index > 0 else ""
+        next_line = lines[index + 1] if index + 1 < len(lines) else ""
+        if re.match(r"^#{2,3} ", line):
+            if previous_line:
+                violations.append(
+                    f"line {line_number} heading is missing a blank line before it"
+                )
+            if next_line:
+                violations.append(f"line {line_number} heading is missing a blank line after it")
+        if ENTRY_LINK_RE.match(line):
+            if previous_line:
+                violations.append(
+                    f"line {line_number} resource entry is missing a blank line before it"
+                )
+            if next_line:
+                violations.append(
+                    f"line {line_number} resource entry is missing a blank line after it"
+                )
+    return violations
+
+
 def main() -> int:
     text = README.read_text(encoding="utf-8")
     lines = text.splitlines()
@@ -241,6 +266,9 @@ def main() -> int:
         fail("README is missing a Contents section")
     if not contents_precedes_categories(lines):
         fail("README Contents section must appear before category sections")
+    spacing_violations = markdown_spacing_violations(lines)
+    if spacing_violations:
+        fail(spacing_violations[0])
 
     for path in PLACEHOLDER_CHECK_FILES:
         if not path.exists():
