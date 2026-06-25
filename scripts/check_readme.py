@@ -12,8 +12,8 @@ from pathlib import Path
 README = Path("README.md")
 AGENTS = Path("AGENTS.md")
 LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
-ENTRY_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(https?://[^)]+\) - .+\.$")
-ENTRY_RE = re.compile(r"^- \[[^\]]+\]\(https?://[^)]+\) - .+\.$")
+ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https?://[^)]+\) - (.+)\.$")
+ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 
@@ -95,6 +95,13 @@ def main() -> int:
         if "](http" in line and "https://awesome.re/badge.svg" not in line:
             if not ENTRY_RE.match(line):
                 fail(f"line {index} has a non-entry HTTP link")
+        entry = ENTRY_RE.match(line)
+        if entry:
+            title, description = entry.groups()
+            if title != title.strip():
+                fail(f"line {index} has an untrimmed linked title")
+            if description != description.strip():
+                fail(f"line {index} has an untrimmed entry description")
     duplicates = sorted(url for url, count in Counter(urls).items() if count > 1)
     if duplicates:
         fail(f"duplicate URLs: {', '.join(duplicates)}")
