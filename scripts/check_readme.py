@@ -18,6 +18,7 @@ ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 PLACEHOLDER_HOSTS = {"example.com", "example.org", "example.net"}
+MAX_TITLE_LENGTH = 80
 MAX_DESCRIPTION_LENGTH = 180
 SMALL_TITLE_WORDS = {
     "a",
@@ -182,6 +183,8 @@ def main() -> int:
             url = re.search(r"\((https?://[^)]+)\)", line).group(1)
             if title != title.strip():
                 fail(f"line {index} has an untrimmed linked title")
+            if len(title) > MAX_TITLE_LENGTH:
+                fail(f"line {index} has an overlong linked title")
             if description != description.strip():
                 fail(f"line {index} has an untrimmed entry description")
             if len(description) > MAX_DESCRIPTION_LENGTH:
