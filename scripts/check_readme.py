@@ -14,6 +14,7 @@ README = Path("README.md")
 AGENTS = Path("AGENTS.md")
 PLACEHOLDER_CHECK_FILES = (AGENTS, README, Path("contributing.md"))
 LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
+HTTP_URL_RE = re.compile(r"https?://[^\s)]+")
 ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https://[^)]+\) - (.+)\.$")
 ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
@@ -106,6 +107,13 @@ def is_title_case(heading: str) -> bool:
         if not word[0].isupper():
             return False
     return True
+
+
+def has_bare_http_url(line: str) -> bool:
+    for match in HTTP_URL_RE.finditer(line):
+        if line[max(0, match.start() - 2):match.start()] != "](":
+            return True
+    return False
 
 
 def main() -> int:
@@ -210,6 +218,8 @@ def main() -> int:
     urls = [url for _, url in links if "awesome.re/badge.svg" not in url]
     canonical_urls = [canonical_url(url) for url in urls]
     for index, line in enumerate(lines, start=1):
+        if has_bare_http_url(line):
+            fail(f"line {index} has a bare HTTP URL")
         if "](http" in line and "https://awesome.re/badge.svg" not in line:
             if not ENTRY_RE.match(line):
                 fail(f"line {index} has a non-entry HTTP link")

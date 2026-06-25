@@ -1,4 +1,9 @@
-from scripts.check_readme import canonical_title, canonical_url, is_canonical_resource_url
+from scripts.check_readme import (
+    canonical_title,
+    canonical_url,
+    has_bare_http_url,
+    is_canonical_resource_url,
+)
 
 
 def test_canonical_url_ignores_tracking_parameters_and_fragments():
@@ -43,3 +48,11 @@ def test_is_canonical_resource_url_rejects_tracking_and_fragments():
     assert not is_canonical_resource_url(
         "https://Example.com/project/?utm_source=newsletter#readme"
     )
+
+
+def test_has_bare_http_url_accepts_markdown_links():
+    assert not has_bare_http_url("- [Project](https://example.com/project) - Description.")
+
+
+def test_has_bare_http_url_rejects_plain_urls():
+    assert has_bare_http_url("See https://example.com/project for details.")
