@@ -3,6 +3,7 @@ from scripts.check_readme import (
     canonical_title,
     canonical_url,
     github_anchor,
+    h1_headings,
     has_bare_http_url,
     is_placeholder_host,
     is_canonical_resource_url,
@@ -46,6 +47,12 @@ def test_canonical_title_preserves_meaningful_words():
 
 def test_github_anchor_strips_punctuation_and_collapses_case():
     assert github_anchor("Code & Algorithm Discovery!") == "code--algorithm-discovery"
+
+
+def test_h1_headings_returns_top_level_headings_only():
+    assert h1_headings(["# Awesome LLM Evolution", "## Contents"]) == [
+        "Awesome LLM Evolution"
+    ]
 
 
 def test_is_canonical_resource_url_accepts_normalized_urls():

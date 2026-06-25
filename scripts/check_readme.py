@@ -121,9 +121,19 @@ def has_bare_http_url(line: str) -> bool:
     return False
 
 
+def h1_headings(lines: list[str]) -> list[str]:
+    return [line.removeprefix("# ").strip() for line in lines if line.startswith("# ")]
+
+
 def main() -> int:
     text = README.read_text(encoding="utf-8")
     lines = text.splitlines()
+
+    headings = h1_headings(lines)
+    if len(headings) != 1:
+        fail("README must contain exactly one H1 heading")
+    if not headings[0].startswith("Awesome LLM Evolution"):
+        fail("README H1 must start with Awesome LLM Evolution")
 
     if "https://awesome.re/badge.svg" not in text:
         fail("README is missing the Awesome badge")
