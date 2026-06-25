@@ -1,4 +1,5 @@
 from scripts.check_readme import (
+    ENTRY_RE,
     canonical_title,
     canonical_url,
     has_bare_http_url,
@@ -56,3 +57,7 @@ def test_has_bare_http_url_accepts_markdown_links():
 
 def test_has_bare_http_url_rejects_plain_urls():
     assert has_bare_http_url("See https://example.com/project for details.")
+
+
+def test_entry_parser_accepts_http_urls_for_explicit_https_validation():
+    assert ENTRY_RE.match("- [Project](http://example.com/project) - Description.")

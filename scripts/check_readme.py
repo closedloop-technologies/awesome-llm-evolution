@@ -15,7 +15,7 @@ AGENTS = Path("AGENTS.md")
 PLACEHOLDER_CHECK_FILES = (AGENTS, README, Path("contributing.md"))
 LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
 HTTP_URL_RE = re.compile(r"https?://[^\s)]+")
-ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https://[^)]+\) - (.+)\.$")
+ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https?://[^)]+\) - (.+)\.$")
 ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
@@ -227,6 +227,8 @@ def main() -> int:
         if entry:
             title, description = entry.groups()
             url = re.search(r"\((https?://[^)]+)\)", line).group(1)
+            if not url.startswith("https://"):
+                fail(f"line {index} uses a non-HTTPS resource URL: {url}")
             if title != title.strip():
                 fail(f"line {index} has an untrimmed linked title")
             if len(title) > MAX_TITLE_LENGTH:
