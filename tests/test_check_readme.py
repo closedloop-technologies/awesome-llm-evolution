@@ -6,6 +6,7 @@ from scripts.check_readme import (
     h1_headings,
     has_bare_http_url,
     has_normalized_inline_whitespace,
+    has_trailing_whitespace,
     is_placeholder_host,
     is_canonical_resource_url,
     url_host,
@@ -49,6 +50,12 @@ def test_canonical_title_preserves_meaningful_words():
 def test_has_normalized_inline_whitespace_rejects_repeated_spaces():
     assert has_normalized_inline_whitespace("Alpha Evolve")
     assert not has_normalized_inline_whitespace("Alpha  Evolve")
+
+
+def test_has_trailing_whitespace_rejects_spaces_and_tabs():
+    assert not has_trailing_whitespace("- [Project](https://example.com) - Description.")
+    assert has_trailing_whitespace("Description. ")
+    assert has_trailing_whitespace("Description.\t")
 
 
 def test_github_anchor_strips_punctuation_and_collapses_case():

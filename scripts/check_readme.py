@@ -92,6 +92,10 @@ def has_normalized_inline_whitespace(value: str) -> bool:
     return value == " ".join(value.split())
 
 
+def has_trailing_whitespace(line: str) -> bool:
+    return line.endswith((" ", "\t"))
+
+
 def is_canonical_resource_url(url: str) -> bool:
     return url == canonical_url(url)
 
@@ -151,6 +155,9 @@ def main() -> int:
         if not path.read_bytes().endswith(b"\n"):
             fail(f"{path} must end with a newline")
         file_text = path.read_text(encoding="utf-8")
+        for line_index, line in enumerate(file_text.splitlines(), start=1):
+            if has_trailing_whitespace(line):
+                fail(f"{path}:{line_index} has trailing whitespace")
         for placeholder in PLACEHOLDERS:
             if placeholder in file_text:
                 fail(f"{path} still contains placeholder: {placeholder}")
