@@ -159,6 +159,22 @@ def main() -> int:
     if duplicate_heading_anchors:
         fail(f"duplicate section anchors: {', '.join(duplicate_heading_anchors)}")
 
+    section_heading_anchors = [
+        github_anchor(line.lstrip("#").strip())
+        for line in lines
+        if re.match(r"^#{2,3} ", line) and line.strip() != "## Contents"
+    ]
+    duplicate_section_heading_anchors = sorted(
+        anchor
+        for anchor, count in Counter(section_heading_anchors).items()
+        if count > 1
+    )
+    if duplicate_section_heading_anchors:
+        fail(
+            "duplicate section or subsection anchors: "
+            f"{', '.join(duplicate_section_heading_anchors)}"
+        )
+
     heading_anchors = {github_anchor(heading): heading for heading in h2_headings}
     contents_entries = []
     for line in lines:
