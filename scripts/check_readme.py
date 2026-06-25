@@ -11,6 +11,7 @@ from pathlib import Path
 
 README = Path("README.md")
 AGENTS = Path("AGENTS.md")
+PLACEHOLDER_CHECK_FILES = (AGENTS, README, Path("contributing.md"))
 LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
 ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https://[^)]+\) - (.+)\.$")
 ENTRY_LINK_RE = ENTRY_RE
@@ -43,11 +44,13 @@ def main() -> int:
     if "## Contents" not in text:
         fail("README is missing a Contents section")
 
-    if AGENTS.exists():
-        agents_text = AGENTS.read_text(encoding="utf-8")
+    for path in PLACEHOLDER_CHECK_FILES:
+        if not path.exists():
+            continue
+        file_text = path.read_text(encoding="utf-8")
         for placeholder in PLACEHOLDERS:
-            if placeholder in agents_text:
-                fail(f"AGENTS.md still contains placeholder: {placeholder}")
+            if placeholder in file_text:
+                fail(f"{path} still contains placeholder: {placeholder}")
 
     h2_headings = [
         line.removeprefix("## ").strip()
