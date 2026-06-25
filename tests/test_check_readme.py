@@ -5,6 +5,7 @@ from scripts.check_readme import (
     github_anchor,
     h1_headings,
     has_bare_http_url,
+    has_noncanonical_horizontal_rule,
     has_normalized_inline_whitespace,
     has_trailing_whitespace,
     is_placeholder_host,
@@ -56,6 +57,12 @@ def test_has_trailing_whitespace_rejects_spaces_and_tabs():
     assert not has_trailing_whitespace("- [Project](https://example.com) - Description.")
     assert has_trailing_whitespace("Description. ")
     assert has_trailing_whitespace("Description.\t")
+
+
+def test_has_noncanonical_horizontal_rule_rejects_star_and_underscore_rules():
+    assert not has_noncanonical_horizontal_rule("---")
+    assert has_noncanonical_horizontal_rule("***")
+    assert has_noncanonical_horizontal_rule("_ _ _")
 
 
 def test_github_anchor_strips_punctuation_and_collapses_case():

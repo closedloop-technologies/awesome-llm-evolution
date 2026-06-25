@@ -96,6 +96,10 @@ def has_trailing_whitespace(line: str) -> bool:
     return line.endswith((" ", "\t"))
 
 
+def has_noncanonical_horizontal_rule(line: str) -> bool:
+    return bool(re.fullmatch(r"(?:\*\s*){3,}|(?:_\s*){3,}", line.strip()))
+
+
 def is_canonical_resource_url(url: str) -> bool:
     return url == canonical_url(url)
 
@@ -158,6 +162,8 @@ def main() -> int:
         for line_index, line in enumerate(file_text.splitlines(), start=1):
             if has_trailing_whitespace(line):
                 fail(f"{path}:{line_index} has trailing whitespace")
+            if has_noncanonical_horizontal_rule(line):
+                fail(f"{path}:{line_index} uses a non-canonical horizontal rule")
         for placeholder in PLACEHOLDERS:
             if placeholder in file_text:
                 fail(f"{path} still contains placeholder: {placeholder}")
