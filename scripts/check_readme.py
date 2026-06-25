@@ -91,6 +91,10 @@ def main() -> int:
 
     links = LINK_RE.findall(text)
     urls = [url for _, url in links if "awesome.re/badge.svg" not in url]
+    for index, line in enumerate(lines, start=1):
+        if "](http" in line and "https://awesome.re/badge.svg" not in line:
+            if not ENTRY_RE.match(line):
+                fail(f"line {index} has a non-entry HTTP link")
     duplicates = sorted(url for url, count in Counter(urls).items() if count > 1)
     if duplicates:
         fail(f"duplicate URLs: {', '.join(duplicates)}")
