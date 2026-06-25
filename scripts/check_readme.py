@@ -12,6 +12,7 @@ from pathlib import Path
 README = Path("README.md")
 AGENTS = Path("AGENTS.md")
 LINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^)]+)\)")
+ENTRY_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(https?://[^)]+\) - .+\.$")
 ENTRY_RE = re.compile(r"^- \[[^\]]+\]\(https?://[^)]+\) - .+\.$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 
@@ -55,6 +56,23 @@ def main() -> int:
     for index, line in enumerate(lines, start=1):
         if line.startswith("- [") and "](#" not in line and not ENTRY_RE.match(line):
             fail(f"line {index} has inconsistent linked-entry formatting")
+
+    current_block: list[tuple[int, str]] = []
+    for index, line in enumerate(lines + [""], start=1):
+        match = ENTRY_LINK_RE.match(line)
+        if match:
+            current_block.append((index, match.group(1)))
+            continue
+        if len(current_block) > 1:
+            titles = [title for _, title in current_block]
+            sorted_titles = sorted(titles, key=str.casefold)
+            if titles != sorted_titles:
+                first_line = current_block[0][0]
+                fail(
+                    "linked entries starting on line "
+                    f"{first_line} are not alphabetized: {', '.join(titles)}"
+                )
+        current_block = []
 
     print(f"PASS\t{len(urls)} unique resource links across {len(h2_headings)} sections")
     return 0
