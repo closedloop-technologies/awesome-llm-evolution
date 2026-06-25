@@ -2,6 +2,7 @@ from scripts.check_readme import (
     ENTRY_RE,
     canonical_title,
     canonical_url,
+    contents_precedes_categories,
     duplicate_values,
     github_anchor,
     h1_headings,
@@ -78,6 +79,12 @@ def test_h1_headings_returns_top_level_headings_only():
     assert h1_headings(["# Awesome LLM Evolution", "## Contents"]) == [
         "Awesome LLM Evolution"
     ]
+
+
+def test_contents_precedes_categories_requires_contents_first():
+    assert contents_precedes_categories(["# Title", "## Contents", "## Category"])
+    assert not contents_precedes_categories(["# Title", "## Category", "## Contents"])
+    assert not contents_precedes_categories(["# Title", "## Category"])
 
 
 def test_is_canonical_resource_url_accepts_normalized_urls():

@@ -141,6 +141,24 @@ def h1_headings(lines: list[str]) -> list[str]:
     return [line.removeprefix("# ").strip() for line in lines if line.startswith("# ")]
 
 
+def contents_precedes_categories(lines: list[str]) -> bool:
+    contents_index = next(
+        (index for index, line in enumerate(lines) if line.strip() == "## Contents"),
+        None,
+    )
+    if contents_index is None:
+        return False
+    first_category_index = next(
+        (
+            index
+            for index, line in enumerate(lines)
+            if line.startswith("## ") and line.strip() != "## Contents"
+        ),
+        None,
+    )
+    return first_category_index is None or contents_index < first_category_index
+
+
 def main() -> int:
     text = README.read_text(encoding="utf-8")
     lines = text.splitlines()
@@ -156,6 +174,8 @@ def main() -> int:
 
     if "## Contents" not in text:
         fail("README is missing a Contents section")
+    if not contents_precedes_categories(lines):
+        fail("README Contents section must appear before category sections")
 
     for path in PLACEHOLDER_CHECK_FILES:
         if not path.exists():
