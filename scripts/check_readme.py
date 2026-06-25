@@ -76,6 +76,10 @@ def canonical_url(url: str) -> str:
     ).rstrip("/")
 
 
+def canonical_title(title: str) -> str:
+    return " ".join(title.split()).casefold()
+
+
 def url_host(url: str) -> str:
     match = re.match(r"https?://([^/?#]+)", url)
     return match.group(1).casefold() if match else ""
@@ -217,7 +221,9 @@ def main() -> int:
     )
     if duplicates:
         fail(f"duplicate URLs: {', '.join(duplicates)}")
-    resource_titles = [title for title, url in links if "awesome.re/badge.svg" not in url]
+    resource_titles = [
+        canonical_title(title) for title, url in links if "awesome.re/badge.svg" not in url
+    ]
     duplicate_titles = sorted(
         title for title, count in Counter(resource_titles).items() if count > 1
     )
