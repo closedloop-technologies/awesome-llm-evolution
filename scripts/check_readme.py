@@ -93,8 +93,7 @@ def is_canonical_resource_url(url: str) -> bool:
 
 
 def url_host(url: str) -> str:
-    match = re.match(r"https?://([^/?#]+)", url)
-    return match.group(1).casefold() if match else ""
+    return (urlsplit(url).hostname or "").casefold()
 
 
 def is_title_case(heading: str) -> bool:
