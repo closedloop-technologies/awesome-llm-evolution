@@ -71,7 +71,7 @@ def canonical_url(url: str) -> str:
         if key.casefold() not in TRACKING_QUERY_PARAMS
         and not key.casefold().startswith(TRACKING_QUERY_PREFIXES)
     ]
-    path = parsed.path.rstrip("/") or "/"
+    path = re.sub(r"/+", "/", parsed.path).rstrip("/") or "/"
     return urlunsplit(
         (
             parsed.scheme.casefold(),

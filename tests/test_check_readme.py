@@ -23,6 +23,10 @@ def test_canonical_url_preserves_non_default_ports():
     assert canonical_url("https://example.com:8443/project") == "https://example.com:8443/project"
 
 
+def test_canonical_url_collapses_repeated_path_slashes():
+    assert canonical_url("https://example.com//project///paper/") == "https://example.com/project/paper"
+
+
 def test_canonical_title_ignores_case_and_extra_spaces():
     assert canonical_title("  Alpha   Evolve ") == "alpha evolve"
 
