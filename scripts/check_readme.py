@@ -22,6 +22,7 @@ PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 PLACEHOLDER_HOSTS = {"example.com", "example.org", "example.net"}
 TRACKING_QUERY_PARAMS = {"fbclid", "gclid", "igshid", "mc_cid", "mc_eid", "ref", "ref_src"}
 TRACKING_QUERY_PREFIXES = ("utm_",)
+ENCODED_PATH_SEPARATOR_RE = re.compile(r"%2f|%5c", re.IGNORECASE)
 MAX_TITLE_LENGTH = 80
 MAX_DESCRIPTION_LENGTH = 180
 GENERIC_LINK_TITLES = {
@@ -154,6 +155,10 @@ def has_url_whitespace(url: str) -> bool:
 def has_encoded_url_control_character(url: str) -> bool:
     decoded = unquote(url)
     return any(ord(character) < 32 or ord(character) == 127 for character in decoded)
+
+
+def has_encoded_url_path_separator(url: str) -> bool:
+    return bool(ENCODED_PATH_SEPARATOR_RE.search(urlsplit(url).path))
 
 
 def has_url_parent_directory_reference(url: str) -> bool:
@@ -363,6 +368,8 @@ def main() -> int:
                 fail(f"line {index} has a resource URL with whitespace: {url}")
             if has_encoded_url_control_character(url):
                 fail(f"line {index} has a resource URL with encoded control characters: {url}")
+            if has_encoded_url_path_separator(url):
+                fail(f"line {index} has a resource URL with encoded path separators: {url}")
             if has_url_parent_directory_reference(url):
                 fail(f"line {index} has a resource URL with parent directory references: {url}")
             if title != title.strip():

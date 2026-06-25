@@ -11,6 +11,7 @@ from scripts.check_readme import (
     has_noncanonical_horizontal_rule,
     has_normalized_inline_whitespace,
     has_encoded_url_control_character,
+    has_encoded_url_path_separator,
     has_trailing_whitespace,
     has_url_credentials,
     has_url_host,
@@ -163,6 +164,12 @@ def test_has_encoded_url_control_character_rejects_percent_encoded_controls():
     assert not has_encoded_url_control_character("https://example.com/project")
     assert has_encoded_url_control_character("https://example.com/project%00name")
     assert has_encoded_url_control_character("https://example.com/project%7fname")
+
+
+def test_has_encoded_url_path_separator_rejects_encoded_slashes_and_backslashes():
+    assert not has_encoded_url_path_separator("https://example.com/project/readme")
+    assert has_encoded_url_path_separator("https://example.com/project%2Freadme")
+    assert has_encoded_url_path_separator("https://example.com/project%5creadme")
 
 
 def test_has_url_parent_directory_reference_rejects_path_traversal():
