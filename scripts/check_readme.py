@@ -125,6 +125,10 @@ def has_url_credentials(url: str) -> bool:
     return parsed.username is not None or parsed.password is not None
 
 
+def has_url_whitespace(url: str) -> bool:
+    return any(character.isspace() for character in url)
+
+
 def is_placeholder_host(host: str) -> bool:
     return host in PLACEHOLDER_HOSTS or any(
         host.endswith(f".{placeholder}") for placeholder in PLACEHOLDER_HOSTS
@@ -324,6 +328,8 @@ def main() -> int:
             url = re.search(r"\((https?://[^)]+)\)", line).group(1)
             if not url.startswith("https://"):
                 fail(f"line {index} uses a non-HTTPS resource URL: {url}")
+            if has_url_whitespace(url):
+                fail(f"line {index} has a resource URL with whitespace: {url}")
             if title != title.strip():
                 fail(f"line {index} has an untrimmed linked title")
             if not has_normalized_inline_whitespace(title):

@@ -12,6 +12,7 @@ from scripts.check_readme import (
     has_trailing_whitespace,
     has_url_credentials,
     has_url_host,
+    has_url_whitespace,
     has_valid_url_port,
     is_placeholder_host,
     is_canonical_resource_url,
@@ -132,6 +133,12 @@ def test_has_url_credentials_rejects_embedded_credentials():
     assert not has_url_credentials("https://example.com/project")
     assert has_url_credentials("https://user@example.com/project")
     assert has_url_credentials("https://user:token@example.com/project")
+
+
+def test_has_url_whitespace_rejects_literal_spaces_and_tabs():
+    assert not has_url_whitespace("https://example.com/project")
+    assert has_url_whitespace("https://example.com/project name")
+    assert has_url_whitespace("https://example.com/project\tname")
 
 
 def test_has_valid_url_port_rejects_malformed_ports():
