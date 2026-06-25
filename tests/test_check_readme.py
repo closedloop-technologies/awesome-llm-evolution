@@ -12,6 +12,7 @@ from scripts.check_readme import (
     has_trailing_whitespace,
     is_placeholder_host,
     is_canonical_resource_url,
+    is_title_case,
     url_host,
 )
 
@@ -85,6 +86,16 @@ def test_contents_precedes_categories_requires_contents_first():
     assert contents_precedes_categories(["# Title", "## Contents", "## Category"])
     assert not contents_precedes_categories(["# Title", "## Category", "## Contents"])
     assert not contents_precedes_categories(["# Title", "## Category"])
+
+
+def test_is_title_case_accepts_acronyms_and_small_words():
+    assert is_title_case("LLM-MCTS for Game Strategy")
+    assert is_title_case("Code and Algorithm Discovery")
+
+
+def test_is_title_case_rejects_lowercase_major_words():
+    assert not is_title_case("code and Algorithm Discovery")
+    assert not is_title_case("Code and algorithm Discovery")
 
 
 def test_is_canonical_resource_url_accepts_normalized_urls():
