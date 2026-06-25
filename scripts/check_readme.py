@@ -18,6 +18,27 @@ ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 MAX_DESCRIPTION_LENGTH = 180
+SMALL_TITLE_WORDS = {
+    "a",
+    "an",
+    "and",
+    "as",
+    "at",
+    "but",
+    "by",
+    "for",
+    "in",
+    "nor",
+    "of",
+    "on",
+    "or",
+    "per",
+    "the",
+    "to",
+    "via",
+    "vs",
+    "with",
+}
 
 
 def fail(message: str) -> None:
@@ -32,6 +53,18 @@ def github_anchor(heading: str) -> str:
 
 def canonical_url(url: str) -> str:
     return url.rstrip("/")
+
+
+def is_title_case(heading: str) -> bool:
+    words = re.findall(r"[A-Za-z][A-Za-z0-9+-]*", heading)
+    for index, word in enumerate(words):
+        if word.isupper():
+            continue
+        if index > 0 and word.casefold() in SMALL_TITLE_WORDS:
+            continue
+        if not word[0].isupper():
+            return False
+    return True
 
 
 def main() -> int:
@@ -57,6 +90,12 @@ def main() -> int:
         for line in lines
         if line.startswith("## ") and line.strip() not in {"## Contents"}
     ]
+    for index, line in enumerate(lines, start=1):
+        if re.match(r"^#{2,3} ", line) and line.strip() != "## Contents":
+            heading = line.lstrip("#").strip()
+            if not is_title_case(heading):
+                fail(f"line {index} has a non-title-case heading: {heading}")
+
     heading_anchor_counts = Counter(github_anchor(heading) for heading in h2_headings)
     duplicate_heading_anchors = sorted(
         anchor for anchor, count in heading_anchor_counts.items() if count > 1

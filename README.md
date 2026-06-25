@@ -34,7 +34,7 @@ A curated list of frameworks that combine **Large Language Models (LLMs)** with 
 
 - [SOAR](https://github.com/flowersteam/SOAR) - Self-improving LLM that fine-tunes itself from successful generations. Dominates ARC symbolic reasoning benchmark.
 
-### A roundup of lots of other papers
+### Additional Paper Roundups
 
 - [LLM4EC](https://github.com/wuxingyu-ai/LLM4EC) - Community-sourced list of all papers at the intersection of LLMs and Evolutionary Computation.
 
