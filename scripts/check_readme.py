@@ -17,6 +17,7 @@ ENTRY_RE = re.compile(r"^- \[([^\]]+)\]\(https://[^)]+\) - (.+)\.$")
 ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
+PLACEHOLDER_HOSTS = {"example.com", "example.org", "example.net"}
 MAX_DESCRIPTION_LENGTH = 180
 SMALL_TITLE_WORDS = {
     "a",
@@ -53,6 +54,11 @@ def github_anchor(heading: str) -> str:
 
 def canonical_url(url: str) -> str:
     return url.rstrip("/")
+
+
+def url_host(url: str) -> str:
+    match = re.match(r"https?://([^/?#]+)", url)
+    return match.group(1).casefold() if match else ""
 
 
 def is_title_case(heading: str) -> bool:
@@ -173,12 +179,15 @@ def main() -> int:
         entry = ENTRY_RE.match(line)
         if entry:
             title, description = entry.groups()
+            url = re.search(r"\((https?://[^)]+)\)", line).group(1)
             if title != title.strip():
                 fail(f"line {index} has an untrimmed linked title")
             if description != description.strip():
                 fail(f"line {index} has an untrimmed entry description")
             if len(description) > MAX_DESCRIPTION_LENGTH:
                 fail(f"line {index} has an overlong entry description")
+            if url_host(url) in PLACEHOLDER_HOSTS:
+                fail(f"line {index} uses a placeholder URL host: {url_host(url)}")
     duplicates = sorted(
         url for url, count in Counter(canonical_urls).items() if count > 1
     )
