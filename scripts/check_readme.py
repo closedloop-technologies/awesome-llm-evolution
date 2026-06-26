@@ -74,7 +74,10 @@ def github_anchor(heading: str) -> str:
 
 
 def canonical_url(url: str) -> str:
-    parsed = urlsplit(url)
+    try:
+        parsed = urlsplit(url)
+    except ValueError:
+        return url
     try:
         port = parsed.port
     except ValueError:
@@ -135,6 +138,14 @@ def url_host(url: str) -> str:
 def has_valid_url_port(url: str) -> bool:
     try:
         urlsplit(url).port
+    except ValueError:
+        return False
+    return True
+
+
+def has_parseable_url(url: str) -> bool:
+    try:
+        urlsplit(url)
     except ValueError:
         return False
     return True
@@ -411,6 +422,8 @@ def main() -> int:
             url = re.search(r"\((https?://[^)]+)\)", line).group(1)
             if not url.startswith("https://"):
                 fail(f"line {index} uses a non-HTTPS resource URL: {url}")
+            if not has_parseable_url(url):
+                fail(f"line {index} has a malformed resource URL: {url}")
             if has_url_whitespace(url):
                 fail(f"line {index} has a resource URL with whitespace: {url}")
             if has_malformed_percent_encoding(url):

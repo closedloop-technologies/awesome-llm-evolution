@@ -14,6 +14,7 @@ from scripts.check_readme import (
     has_encoded_url_control_character,
     has_encoded_url_whitespace,
     has_encoded_url_path_separator,
+    has_parseable_url,
     has_trailing_whitespace,
     has_url_credentials,
     has_url_current_directory_reference,
@@ -54,6 +55,10 @@ def test_canonical_url_removes_trailing_host_dot():
 
 def test_canonical_url_preserves_non_default_ports():
     assert canonical_url("https://example.com:8443/project") == "https://example.com:8443/project"
+
+
+def test_canonical_url_preserves_malformed_url_for_later_validation():
+    assert canonical_url("https://[::1/project") == "https://[::1/project"
 
 
 def test_canonical_url_collapses_repeated_path_slashes():
@@ -267,6 +272,11 @@ def test_has_url_current_directory_reference_rejects_noncanonical_segments():
 def test_has_valid_url_port_rejects_malformed_ports():
     assert has_valid_url_port("https://example.com:8443/project")
     assert not has_valid_url_port("https://example.com:bad/project")
+
+
+def test_has_parseable_url_rejects_invalid_bracketed_hosts():
+    assert has_parseable_url("https://example.com/project")
+    assert not has_parseable_url("https://[::1/project")
 
 
 def test_is_placeholder_host_rejects_example_subdomains():
