@@ -10,6 +10,7 @@ from scripts.check_readme import (
     has_descriptive_link_title,
     has_noncanonical_horizontal_rule,
     has_normalized_inline_whitespace,
+    has_malformed_percent_encoding,
     has_encoded_url_control_character,
     has_encoded_url_whitespace,
     has_encoded_url_path_separator,
@@ -225,6 +226,13 @@ def test_has_encoded_url_control_character_rejects_percent_encoded_controls():
     assert not has_encoded_url_control_character("https://example.com/project")
     assert has_encoded_url_control_character("https://example.com/project%00name")
     assert has_encoded_url_control_character("https://example.com/project%7fname")
+
+
+def test_has_malformed_percent_encoding_rejects_incomplete_escapes():
+    assert not has_malformed_percent_encoding("https://example.com/project%20name")
+    assert has_malformed_percent_encoding("https://example.com/project%")
+    assert has_malformed_percent_encoding("https://example.com/project%2")
+    assert has_malformed_percent_encoding("https://example.com/project%zz")
 
 
 def test_has_encoded_url_whitespace_rejects_percent_encoded_spaces_and_tabs():
