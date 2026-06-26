@@ -218,23 +218,25 @@ def has_url_whitespace(url: str) -> bool:
 
 
 def has_encoded_url_control_character(url: str) -> bool:
-    decoded = url
-    for _ in range(3):
-        previous = decoded
-        decoded = unquote(previous)
-        if any(ord(character) < 32 or ord(character) == 127 for character in decoded):
-            return True
-        if decoded == previous:
-            return False
-    return False
+    return any(ord(character) < 32 or ord(character) == 127 for character in fully_unquote(url))
 
 
 def has_malformed_percent_encoding(url: str) -> bool:
     return bool(MALFORMED_PERCENT_ENCODING_RE.search(url))
 
 
+def fully_unquote(value: str) -> str:
+    decoded = value
+    for _ in range(3):
+        previous = decoded
+        decoded = unquote(previous)
+        if decoded == previous:
+            return decoded
+    return decoded
+
+
 def has_encoded_url_whitespace(url: str) -> bool:
-    return any(character.isspace() for character in unquote(url))
+    return any(character.isspace() for character in fully_unquote(url))
 
 
 def has_encoded_url_path_separator(url: str) -> bool:
@@ -247,7 +249,7 @@ def has_encoded_url_query_or_fragment_marker(url: str) -> bool:
     if parsed is None:
         return False
     path = parsed.path
-    decoded_path = unquote(path)
+    decoded_path = fully_unquote(path)
     return decoded_path != path and ("?" in decoded_path or "#" in decoded_path)
 
 
@@ -256,7 +258,7 @@ def has_encoded_url_path_alias(url: str) -> bool:
     if parsed is None:
         return False
     path = parsed.path
-    return unquote(path) != path
+    return fully_unquote(path) != path
 
 
 def has_url_backslash(url: str) -> bool:
@@ -265,12 +267,12 @@ def has_url_backslash(url: str) -> bool:
 
 def has_url_parent_directory_reference(url: str) -> bool:
     parsed = safe_urlsplit(url)
-    return parsed is not None and ".." in Path(unquote(parsed.path)).parts
+    return parsed is not None and ".." in Path(fully_unquote(parsed.path)).parts
 
 
 def has_url_current_directory_reference(url: str) -> bool:
     parsed = safe_urlsplit(url)
-    return parsed is not None and "." in unquote(parsed.path).split("/")
+    return parsed is not None and "." in fully_unquote(parsed.path).split("/")
 
 
 def is_placeholder_host(host: str) -> bool:

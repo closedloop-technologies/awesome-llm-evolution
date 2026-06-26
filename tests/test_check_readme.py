@@ -347,6 +347,7 @@ def test_has_encoded_url_whitespace_rejects_percent_encoded_spaces_and_tabs():
     assert not has_encoded_url_whitespace("https://example.com/project")
     assert has_encoded_url_whitespace("https://example.com/project%20name")
     assert has_encoded_url_whitespace("https://example.com/project%09name")
+    assert has_encoded_url_whitespace("https://example.com/project%2520name")
 
 
 def test_has_encoded_url_path_separator_rejects_encoded_slashes_and_backslashes():
