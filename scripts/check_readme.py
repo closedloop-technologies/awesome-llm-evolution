@@ -257,7 +257,10 @@ def parse_legacy_ipv4_address(host: str) -> IPv4Address | None:
 def is_local_resource_host(host: str) -> bool:
     if host in LOCAL_RESOURCE_HOSTS:
         return True
-    legacy_ipv4_address = parse_legacy_ipv4_address(host)
+    try:
+        legacy_ipv4_address = parse_legacy_ipv4_address(host)
+    except ValueError:
+        return True
     if legacy_ipv4_address is not None:
         return not legacy_ipv4_address.is_global
     try:

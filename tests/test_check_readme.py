@@ -380,6 +380,8 @@ def test_is_local_resource_host_rejects_local_only_hosts():
     assert is_local_resource_host("017700000001")
     assert is_local_resource_host("127.1")
     assert is_local_resource_host("127.0.1")
+    assert is_local_resource_host("-1")
+    assert is_local_resource_host("127.-1")
 
 
 def test_is_local_resource_host_accepts_public_hosts():
