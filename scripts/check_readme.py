@@ -93,7 +93,12 @@ def canonical_url(url: str) -> str:
         else parsed.netloc.rstrip(".").casefold()
     )
     default_port = (parsed.scheme.casefold(), port) in {("http", 80), ("https", 443)}
-    netloc = hostname if port is None or default_port else f"{hostname}:{port}"
+    canonical_hostname = f"[{hostname}]" if ":" in hostname else hostname
+    netloc = (
+        canonical_hostname
+        if port is None or default_port
+        else f"{canonical_hostname}:{port}"
+    )
     filtered_query = [
         (key, value)
         for key, value in parse_qsl(parsed.query, keep_blank_values=True)

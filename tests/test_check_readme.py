@@ -65,6 +65,15 @@ def test_canonical_url_preserves_non_default_ports():
     assert canonical_url("https://example.com:8443/project") == "https://example.com:8443/project"
 
 
+def test_canonical_url_preserves_ipv6_brackets():
+    assert canonical_url("https://[2001:4860:4860::8888]/project/") == (
+        "https://[2001:4860:4860::8888]/project"
+    )
+    assert canonical_url("https://[2001:4860:4860::8888]:8443/project") == (
+        "https://[2001:4860:4860::8888]:8443/project"
+    )
+
+
 def test_canonical_url_preserves_malformed_url_for_later_validation():
     assert canonical_url("https://[::1/project") == "https://[::1/project"
 
