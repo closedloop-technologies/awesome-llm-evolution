@@ -375,12 +375,18 @@ def test_is_local_resource_host_rejects_local_only_hosts():
     assert is_local_resource_host("169.254.10.10")
     assert is_local_resource_host("100.64.0.1")
     assert is_local_resource_host("fc00::1")
+    assert is_local_resource_host("2130706433")
+    assert is_local_resource_host("0x7f000001")
+    assert is_local_resource_host("017700000001")
+    assert is_local_resource_host("127.1")
+    assert is_local_resource_host("127.0.1")
 
 
 def test_is_local_resource_host_accepts_public_hosts():
     assert not is_local_resource_host("github.com")
     assert not is_local_resource_host("8.8.8.8")
     assert not is_local_resource_host("2001:4860:4860::8888")
+    assert not is_local_resource_host("134744072")
 
 
 def test_entry_parser_accepts_http_urls_for_explicit_https_validation():

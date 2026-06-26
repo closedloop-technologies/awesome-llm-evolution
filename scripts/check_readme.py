@@ -6,7 +6,7 @@ from __future__ import annotations
 import re
 import sys
 from collections import Counter
-from ipaddress import ip_address
+from ipaddress import IPv4Address, ip_address
 from pathlib import Path
 from urllib.parse import parse_qsl, unquote, urlencode, urlsplit, urlunsplit
 
@@ -214,9 +214,52 @@ def is_placeholder_host(host: str) -> bool:
     )
 
 
+def parse_legacy_ipv4_address(host: str) -> IPv4Address | None:
+    parts = host.split(".")
+    if len(parts) > 4:
+        return None
+
+    numbers = []
+    for part in parts:
+        if not part:
+            return None
+        if part.casefold().startswith("0x"):
+            base = 16
+            value = part[2:]
+        elif len(part) > 1 and part.startswith("0"):
+            base = 8
+            value = part[1:]
+        else:
+            base = 10
+            value = part
+        try:
+            number = int(value or "0", base)
+        except ValueError:
+            return None
+        numbers.append(number)
+
+    if len(numbers) == 1:
+        if numbers[0] > 0xFFFFFFFF:
+            return None
+        packed = numbers[0]
+    else:
+        if any(number > 0xFF for number in numbers[:-1]):
+            return None
+        last_max = 1 << (8 * (5 - len(numbers)))
+        if numbers[-1] >= last_max:
+            return None
+        packed = numbers[-1]
+        for index, number in enumerate(reversed(numbers[:-1]), start=5 - len(numbers)):
+            packed |= number << (8 * index)
+    return IPv4Address(packed)
+
+
 def is_local_resource_host(host: str) -> bool:
     if host in LOCAL_RESOURCE_HOSTS:
         return True
+    legacy_ipv4_address = parse_legacy_ipv4_address(host)
+    if legacy_ipv4_address is not None:
+        return not legacy_ipv4_address.is_global
     try:
         address = ip_address(host)
     except ValueError:
