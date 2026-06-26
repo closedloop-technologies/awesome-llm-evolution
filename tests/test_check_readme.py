@@ -388,6 +388,8 @@ def test_has_url_current_directory_reference_rejects_noncanonical_segments():
 def test_has_valid_url_port_rejects_malformed_ports():
     assert has_valid_url_port("https://example.com:8443/project")
     assert not has_valid_url_port("https://example.com:bad/project")
+    assert not has_valid_url_port("https://example.com:/project")
+    assert not has_valid_url_port("https://[2001:4860:4860::8888]:/project")
 
 
 def test_has_parseable_url_rejects_invalid_bracketed_hosts():
