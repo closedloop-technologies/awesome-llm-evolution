@@ -221,6 +221,7 @@ def is_local_resource_host(host: str) -> bool:
         or address.is_loopback
         or address.is_link_local
         or address.is_unspecified
+        or not address.is_global
     )
 
 
