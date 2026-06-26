@@ -30,6 +30,7 @@ from scripts.check_readme import (
     is_canonical_resource_url,
     is_title_case,
     markdown_spacing_violations,
+    resource_order_violations,
     url_host,
 )
 
@@ -185,6 +186,52 @@ def test_markdown_spacing_rejects_adjacent_resource_entries():
         "line 5 resource entry is missing a blank line after it",
         "line 6 resource entry is missing a blank line before it",
     ]
+
+
+def test_resource_order_accepts_alphabetized_entries_with_blank_lines():
+    lines = [
+        "# Title",
+        "",
+        "## Category",
+        "",
+        "- [Alpha](https://example.com/alpha) - Description.",
+        "",
+        "- [Beta](https://example.com/beta) - Description.",
+    ]
+
+    assert resource_order_violations(lines) == []
+
+
+def test_resource_order_rejects_unordered_entries_with_blank_lines():
+    lines = [
+        "# Title",
+        "",
+        "## Category",
+        "",
+        "- [Beta](https://example.com/beta) - Description.",
+        "",
+        "- [Alpha](https://example.com/alpha) - Description.",
+    ]
+
+    assert resource_order_violations(lines) == [
+        "linked entries in Category starting on line 5 are not alphabetized: Beta, Alpha"
+    ]
+
+
+def test_resource_order_resets_at_subsections():
+    lines = [
+        "# Title",
+        "",
+        "## Category",
+        "",
+        "- [Beta](https://example.com/beta) - Description.",
+        "",
+        "### Subsection",
+        "",
+        "- [Alpha](https://example.com/alpha) - Description.",
+    ]
+
+    assert resource_order_violations(lines) == []
 
 
 def test_is_title_case_accepts_acronyms_and_small_words():

@@ -296,6 +296,37 @@ def markdown_spacing_violations(lines: list[str]) -> list[str]:
     return violations
 
 
+def resource_order_violations(lines: list[str]) -> list[str]:
+    violations = []
+    current_section = "README"
+    section_entries: list[tuple[int, str]] = []
+
+    def check_section() -> None:
+        if len(section_entries) <= 1:
+            return
+        titles = [title for _, title in section_entries]
+        sorted_titles = sorted(titles, key=str.casefold)
+        if titles != sorted_titles:
+            first_line = section_entries[0][0]
+            violations.append(
+                "linked entries in "
+                f"{current_section} starting on line {first_line} "
+                f"are not alphabetized: {', '.join(titles)}"
+            )
+
+    for index, line in enumerate(lines + ["# END"], start=1):
+        if re.match(r"^#{1,3} ", line):
+            check_section()
+            current_section = line.lstrip("#").strip()
+            section_entries = []
+            continue
+        match = ENTRY_LINK_RE.match(line)
+        if match:
+            section_entries.append((index, match.group(1)))
+
+    return violations
+
+
 def main() -> int:
     text = README.read_text(encoding="utf-8")
     lines = text.splitlines()
@@ -514,22 +545,9 @@ def main() -> int:
         if line.startswith("- [") and "](#" not in line and not ENTRY_RE.match(line):
             fail(f"line {index} has inconsistent linked-entry formatting")
 
-    current_block: list[tuple[int, str]] = []
-    for index, line in enumerate(lines + [""], start=1):
-        match = ENTRY_LINK_RE.match(line)
-        if match:
-            current_block.append((index, match.group(1)))
-            continue
-        if len(current_block) > 1:
-            titles = [title for _, title in current_block]
-            sorted_titles = sorted(titles, key=str.casefold)
-            if titles != sorted_titles:
-                first_line = current_block[0][0]
-                fail(
-                    "linked entries starting on line "
-                    f"{first_line} are not alphabetized: {', '.join(titles)}"
-                )
-        current_block = []
+    order_violations = resource_order_violations(lines)
+    if order_violations:
+        fail(order_violations[0])
 
     print(f"PASS\t{len(urls)} unique resource links across {len(h2_headings)} sections")
     return 0
