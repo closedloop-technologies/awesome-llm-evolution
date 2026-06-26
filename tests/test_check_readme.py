@@ -398,6 +398,20 @@ def test_has_parseable_url_rejects_invalid_bracketed_hosts():
     assert not has_parseable_url("https://[::1/project")
 
 
+def test_url_helpers_reject_invalid_bracketed_hosts_without_raising():
+    url = "https://[::1/project"
+
+    assert url_host(url) == ""
+    assert not has_url_host(url)
+    assert not has_url_host_percent_encoding(url)
+    assert not has_url_credentials(url)
+    assert not has_encoded_url_path_separator(url)
+    assert not has_encoded_url_query_or_fragment_marker(url)
+    assert not has_encoded_url_path_alias(url)
+    assert not has_url_parent_directory_reference(url)
+    assert not has_url_current_directory_reference(url)
+
+
 def test_is_placeholder_host_rejects_example_subdomains():
     assert is_placeholder_host("docs.example.com")
     assert is_placeholder_host(url_host("https://docs.example.com./project"))

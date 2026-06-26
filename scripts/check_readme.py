@@ -145,8 +145,18 @@ def is_canonical_resource_url(url: str) -> bool:
     return url == canonical_url(url)
 
 
+def safe_urlsplit(url: str):
+    try:
+        return urlsplit(url)
+    except ValueError:
+        return None
+
+
 def url_host(url: str) -> str:
-    return (urlsplit(url).hostname or "").rstrip(".").casefold()
+    parsed = safe_urlsplit(url)
+    if parsed is None:
+        return ""
+    return (parsed.hostname or "").rstrip(".").casefold()
 
 
 def has_valid_url_port(url: str) -> bool:
@@ -173,7 +183,10 @@ def has_url_host(url: str) -> bool:
 
 
 def has_url_host_percent_encoding(url: str) -> bool:
-    return "%" in (urlsplit(url).hostname or "")
+    parsed = safe_urlsplit(url)
+    if parsed is None:
+        return False
+    return "%" in (parsed.hostname or "")
 
 
 def has_valid_url_host_syntax(host: str) -> bool:
@@ -192,7 +205,9 @@ def has_valid_url_host_syntax(host: str) -> bool:
 
 
 def has_url_credentials(url: str) -> bool:
-    parsed = urlsplit(url)
+    parsed = safe_urlsplit(url)
+    if parsed is None:
+        return False
     return parsed.username is not None or parsed.password is not None
 
 
@@ -221,17 +236,24 @@ def has_encoded_url_whitespace(url: str) -> bool:
 
 
 def has_encoded_url_path_separator(url: str) -> bool:
-    return bool(ENCODED_PATH_SEPARATOR_RE.search(urlsplit(url).path))
+    parsed = safe_urlsplit(url)
+    return parsed is not None and bool(ENCODED_PATH_SEPARATOR_RE.search(parsed.path))
 
 
 def has_encoded_url_query_or_fragment_marker(url: str) -> bool:
-    path = urlsplit(url).path
+    parsed = safe_urlsplit(url)
+    if parsed is None:
+        return False
+    path = parsed.path
     decoded_path = unquote(path)
     return decoded_path != path and ("?" in decoded_path or "#" in decoded_path)
 
 
 def has_encoded_url_path_alias(url: str) -> bool:
-    path = urlsplit(url).path
+    parsed = safe_urlsplit(url)
+    if parsed is None:
+        return False
+    path = parsed.path
     return unquote(path) != path
 
 
@@ -240,11 +262,13 @@ def has_url_backslash(url: str) -> bool:
 
 
 def has_url_parent_directory_reference(url: str) -> bool:
-    return ".." in Path(unquote(urlsplit(url).path)).parts
+    parsed = safe_urlsplit(url)
+    return parsed is not None and ".." in Path(unquote(parsed.path)).parts
 
 
 def has_url_current_directory_reference(url: str) -> bool:
-    return "." in unquote(urlsplit(url).path).split("/")
+    parsed = safe_urlsplit(url)
+    return parsed is not None and "." in unquote(parsed.path).split("/")
 
 
 def is_placeholder_host(host: str) -> bool:
