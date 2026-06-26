@@ -230,13 +230,15 @@ def markdown_spacing_violations(lines: list[str]) -> list[str]:
         line_number = index + 1
         previous_line = lines[index - 1] if index > 0 else ""
         next_line = lines[index + 1] if index + 1 < len(lines) else ""
-        if re.match(r"^#{2,3} ", line):
+        if re.match(r"^#{1,3} ", line):
             if previous_line:
                 violations.append(
                     f"line {line_number} heading is missing a blank line before it"
                 )
             if next_line:
-                violations.append(f"line {line_number} heading is missing a blank line after it")
+                violations.append(
+                    f"line {line_number} heading is missing a blank line after it"
+                )
         if ENTRY_LINK_RE.match(line):
             if previous_line:
                 violations.append(

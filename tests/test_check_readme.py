@@ -137,7 +137,21 @@ def test_markdown_spacing_rejects_heading_without_blank_line():
     ]
 
     assert markdown_spacing_violations(lines) == [
-        "line 2 heading is missing a blank line before it"
+        "line 1 heading is missing a blank line after it",
+        "line 2 heading is missing a blank line before it",
+    ]
+
+
+def test_markdown_spacing_rejects_h1_without_blank_line_after_it():
+    lines = [
+        "# Title",
+        "Description.",
+        "",
+        "## Category",
+    ]
+
+    assert markdown_spacing_violations(lines) == [
+        "line 1 heading is missing a blank line after it"
     ]
 
 
