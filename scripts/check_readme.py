@@ -162,10 +162,12 @@ def url_host(url: str) -> str:
 def has_valid_url_port(url: str) -> bool:
     try:
         parsed = urlsplit(url)
-        parsed.port
+        port = parsed.port
     except ValueError:
         return False
     if parsed.netloc.rsplit("@", 1)[-1].endswith(":"):
+        return False
+    if port == 0:
         return False
     return True
 
