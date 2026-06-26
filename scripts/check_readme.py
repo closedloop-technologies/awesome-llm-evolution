@@ -7,7 +7,7 @@ import re
 import socket
 import sys
 from collections import Counter
-from ipaddress import IPv4Address, ip_address
+from ipaddress import IPv4Address, IPv6Address, ip_address
 from pathlib import Path
 from urllib.parse import parse_qsl, unquote, urlencode, urlsplit, urlunsplit
 
@@ -24,6 +24,7 @@ CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 PLACEHOLDER_HOSTS = {"example.com", "example.org", "example.net"}
 LOCAL_RESOURCE_HOSTS = {"0.0.0.0", "127.0.0.1", "::1", "localhost"}
+NAT64_WELL_KNOWN_PREFIX = IPv6Address("64:ff9b::")
 TRACKING_QUERY_PARAMS = {"fbclid", "gclid", "igshid", "mc_cid", "mc_eid", "ref", "ref_src"}
 TRACKING_QUERY_PREFIXES = ("utm_",)
 ENCODED_PATH_SEPARATOR_RE = re.compile(r"%2f|%5c", re.IGNORECASE)
@@ -292,6 +293,14 @@ def parse_legacy_ipv4_address(host: str) -> IPv4Address | None:
         return None
 
 
+def nat64_mapped_ipv4_address(address) -> IPv4Address | None:
+    if address.version != 6:
+        return None
+    if int(address) >> 32 != int(NAT64_WELL_KNOWN_PREFIX) >> 32:
+        return None
+    return IPv4Address(int(address) & 0xFFFFFFFF)
+
+
 def is_local_resource_host(host: str) -> bool:
     if host in LOCAL_RESOURCE_HOSTS:
         return True
@@ -301,6 +310,9 @@ def is_local_resource_host(host: str) -> bool:
         address = parse_legacy_ipv4_address(host)
         if address is None:
             return False
+    nat64_mapped = nat64_mapped_ipv4_address(address)
+    if nat64_mapped is not None:
+        return is_local_resource_host(str(nat64_mapped))
     return (
         address.is_private
         or address.is_loopback
