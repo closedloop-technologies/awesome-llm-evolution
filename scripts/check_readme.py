@@ -250,7 +250,14 @@ def has_encoded_url_whitespace(url: str) -> bool:
 
 def has_encoded_url_path_separator(url: str) -> bool:
     parsed = safe_urlsplit(url)
-    return parsed is not None and bool(ENCODED_PATH_SEPARATOR_RE.search(parsed.path))
+    if parsed is None:
+        return False
+    decoded_path = fully_unquote(parsed.path)
+    return (
+        bool(ENCODED_PATH_SEPARATOR_RE.search(parsed.path))
+        or decoded_path.count("/") != parsed.path.count("/")
+        or decoded_path.count("\\") != parsed.path.count("\\")
+    )
 
 
 def has_encoded_url_query_or_fragment_marker(url: str) -> bool:
