@@ -13,6 +13,7 @@ from scripts.check_readme import (
     has_normalized_inline_whitespace,
     has_malformed_percent_encoding,
     has_encoded_url_control_character,
+    has_encoded_url_path_alias,
     has_encoded_url_whitespace,
     has_encoded_url_path_separator,
     has_parseable_url,
@@ -328,6 +329,11 @@ def test_has_encoded_url_path_separator_rejects_encoded_slashes_and_backslashes(
     assert not has_encoded_url_path_separator("https://example.com/project/readme")
     assert has_encoded_url_path_separator("https://example.com/project%2Freadme")
     assert has_encoded_url_path_separator("https://example.com/project%5creadme")
+
+
+def test_has_encoded_url_path_alias_rejects_percent_encoded_path_aliases():
+    assert not has_encoded_url_path_alias("https://example.com/project/readme")
+    assert has_encoded_url_path_alias("https://example.com/proj%65ct/readme")
 
 
 def test_has_url_path_backslash_rejects_literal_backslashes():
