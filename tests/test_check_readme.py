@@ -21,6 +21,7 @@ from scripts.check_readme import (
     has_url_current_directory_reference,
     has_url_host,
     has_url_host_percent_encoding,
+    has_valid_url_host_syntax,
     has_url_path_backslash,
     has_url_parent_directory_reference,
     has_url_whitespace,
@@ -276,6 +277,20 @@ def test_has_url_host_percent_encoding_rejects_encoded_hosts():
     assert not has_url_host_percent_encoding("https://example.com/project")
     assert has_url_host_percent_encoding("https://%6cocalhost/project")
     assert has_url_host_percent_encoding("https://%65xample.com/project")
+
+
+def test_has_valid_url_host_syntax_rejects_malformed_dns_labels():
+    assert not has_valid_url_host_syntax("bad_host.example")
+    assert not has_valid_url_host_syntax("-bad.example")
+    assert not has_valid_url_host_syntax("bad-.example")
+    assert not has_valid_url_host_syntax("bad..example")
+
+
+def test_has_valid_url_host_syntax_accepts_domains_and_ip_literals():
+    assert has_valid_url_host_syntax("github.com")
+    assert has_valid_url_host_syntax("docs.github.io")
+    assert has_valid_url_host_syntax("8.8.8.8")
+    assert has_valid_url_host_syntax("2001:4860:4860::8888")
 
 
 def test_has_url_credentials_rejects_embedded_credentials():

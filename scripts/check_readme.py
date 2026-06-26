@@ -26,6 +26,7 @@ TRACKING_QUERY_PARAMS = {"fbclid", "gclid", "igshid", "mc_cid", "mc_eid", "ref",
 TRACKING_QUERY_PREFIXES = ("utm_",)
 ENCODED_PATH_SEPARATOR_RE = re.compile(r"%2f|%5c", re.IGNORECASE)
 MALFORMED_PERCENT_ENCODING_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
+HOST_LABEL_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$", re.IGNORECASE)
 MAX_TITLE_LENGTH = 80
 MAX_DESCRIPTION_LENGTH = 180
 GENERIC_LINK_TITLES = {
@@ -163,6 +164,17 @@ def has_url_host(url: str) -> bool:
 
 def has_url_host_percent_encoding(url: str) -> bool:
     return "%" in (urlsplit(url).hostname or "")
+
+
+def has_valid_url_host_syntax(host: str) -> bool:
+    if not host or len(host) > 253:
+        return False
+    try:
+        ip_address(host)
+    except ValueError:
+        labels = host.split(".")
+        return all(HOST_LABEL_RE.fullmatch(label) for label in labels)
+    return True
 
 
 def has_url_credentials(url: str) -> bool:
@@ -520,6 +532,8 @@ def main() -> int:
                 fail(f"line {index} has a resource URL with an encoded host: {url}")
             if not has_valid_url_port(url):
                 fail(f"line {index} has a resource URL with an invalid port: {url}")
+            if not has_valid_url_host_syntax(host):
+                fail(f"line {index} has a malformed resource URL host: {host}")
             if has_url_credentials(url):
                 fail(f"line {index} has a resource URL with embedded credentials: {url}")
             if is_placeholder_host(host):
