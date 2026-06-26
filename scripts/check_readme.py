@@ -174,7 +174,7 @@ def has_valid_url_host_syntax(host: str) -> bool:
         ip_address(host)
     except ValueError:
         labels = host.split(".")
-        return all(HOST_LABEL_RE.fullmatch(label) for label in labels)
+        return len(labels) >= 2 and all(HOST_LABEL_RE.fullmatch(label) for label in labels)
     return True
 
 
