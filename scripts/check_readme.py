@@ -204,6 +204,12 @@ def has_encoded_url_path_separator(url: str) -> bool:
     return bool(ENCODED_PATH_SEPARATOR_RE.search(urlsplit(url).path))
 
 
+def has_encoded_url_query_or_fragment_marker(url: str) -> bool:
+    path = urlsplit(url).path
+    decoded_path = unquote(path)
+    return decoded_path != path and ("?" in decoded_path or "#" in decoded_path)
+
+
 def has_encoded_url_path_alias(url: str) -> bool:
     path = urlsplit(url).path
     return unquote(path) != path
@@ -526,6 +532,11 @@ def main() -> int:
                 fail(f"line {index} has a resource URL path with backslashes: {url}")
             if has_encoded_url_path_separator(url):
                 fail(f"line {index} has a resource URL with encoded path separators: {url}")
+            if has_encoded_url_query_or_fragment_marker(url):
+                fail(
+                    f"line {index} has a resource URL with encoded query "
+                    f"or fragment markers: {url}"
+                )
             if has_encoded_url_path_alias(url):
                 fail(f"line {index} has a resource URL with encoded path aliases: {url}")
             if has_url_parent_directory_reference(url):

@@ -14,6 +14,7 @@ from scripts.check_readme import (
     has_malformed_percent_encoding,
     has_encoded_url_control_character,
     has_encoded_url_path_alias,
+    has_encoded_url_query_or_fragment_marker,
     has_encoded_url_whitespace,
     has_encoded_url_path_separator,
     has_parseable_url,
@@ -334,6 +335,13 @@ def test_has_encoded_url_path_separator_rejects_encoded_slashes_and_backslashes(
     assert not has_encoded_url_path_separator("https://example.com/project/readme")
     assert has_encoded_url_path_separator("https://example.com/project%2Freadme")
     assert has_encoded_url_path_separator("https://example.com/project%5creadme")
+
+
+def test_has_encoded_url_query_or_fragment_marker_rejects_encoded_delimiters():
+    assert not has_encoded_url_query_or_fragment_marker("https://example.com/project")
+    assert not has_encoded_url_query_or_fragment_marker("https://example.com/search?q=paper")
+    assert has_encoded_url_query_or_fragment_marker("https://example.com/project%3Fraw=1")
+    assert has_encoded_url_query_or_fragment_marker("https://example.com/project%23readme")
 
 
 def test_has_encoded_url_path_alias_rejects_percent_encoded_path_aliases():
