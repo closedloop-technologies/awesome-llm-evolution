@@ -6,6 +6,7 @@ from __future__ import annotations
 import re
 import sys
 from collections import Counter
+from ipaddress import ip_address
 from pathlib import Path
 from urllib.parse import parse_qsl, unquote, urlencode, urlsplit, urlunsplit
 
@@ -124,6 +125,10 @@ def has_trailing_whitespace(line: str) -> bool:
     return line.endswith((" ", "\t"))
 
 
+def has_control_character(line: str) -> bool:
+    return any(ord(character) < 32 or ord(character) == 127 for character in line)
+
+
 def has_noncanonical_horizontal_rule(line: str) -> bool:
     return bool(re.fullmatch(r"(?:\*\s*){3,}|(?:_\s*){3,}", line.strip()))
 
@@ -201,7 +206,18 @@ def is_placeholder_host(host: str) -> bool:
 
 
 def is_local_resource_host(host: str) -> bool:
-    return host in LOCAL_RESOURCE_HOSTS
+    if host in LOCAL_RESOURCE_HOSTS:
+        return True
+    try:
+        address = ip_address(host)
+    except ValueError:
+        return False
+    return (
+        address.is_private
+        or address.is_loopback
+        or address.is_link_local
+        or address.is_unspecified
+    )
 
 
 def is_title_case(heading: str) -> bool:
@@ -304,6 +320,8 @@ def main() -> int:
             fail(f"{path} must end with a newline")
         file_text = path.read_text(encoding="utf-8")
         for line_index, line in enumerate(file_text.splitlines(), start=1):
+            if has_control_character(line):
+                fail(f"{path}:{line_index} has control characters")
             if has_trailing_whitespace(line):
                 fail(f"{path}:{line_index} has trailing whitespace")
             if has_noncanonical_horizontal_rule(line):

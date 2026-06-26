@@ -7,6 +7,7 @@ from scripts.check_readme import (
     github_anchor,
     h1_headings,
     has_bare_http_url,
+    has_control_character,
     has_descriptive_link_title,
     has_noncanonical_horizontal_rule,
     has_normalized_inline_whitespace,
@@ -98,6 +99,12 @@ def test_has_trailing_whitespace_rejects_spaces_and_tabs():
     assert not has_trailing_whitespace("- [Project](https://example.com) - Description.")
     assert has_trailing_whitespace("Description. ")
     assert has_trailing_whitespace("Description.\t")
+
+
+def test_has_control_character_rejects_hidden_control_bytes():
+    assert not has_control_character("- [Project](https://example.com) - Description.")
+    assert has_control_character("Project\x00Name")
+    assert has_control_character("Project\x7fName")
 
 
 def test_has_noncanonical_horizontal_rule_rejects_star_and_underscore_rules():
@@ -294,10 +301,16 @@ def test_is_local_resource_host_rejects_local_only_hosts():
     assert is_local_resource_host("127.0.0.1")
     assert is_local_resource_host("0.0.0.0")
     assert is_local_resource_host("::1")
+    assert is_local_resource_host("10.0.0.1")
+    assert is_local_resource_host("172.16.0.5")
+    assert is_local_resource_host("192.168.1.20")
+    assert is_local_resource_host("169.254.10.10")
+    assert is_local_resource_host("fc00::1")
 
 
 def test_is_local_resource_host_accepts_public_hosts():
     assert not is_local_resource_host("github.com")
+    assert not is_local_resource_host("8.8.8.8")
 
 
 def test_entry_parser_accepts_http_urls_for_explicit_https_validation():
