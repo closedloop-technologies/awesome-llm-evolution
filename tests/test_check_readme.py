@@ -9,6 +9,7 @@ from scripts.check_readme import (
     has_bare_http_url,
     has_control_character,
     has_descriptive_link_title,
+    has_markdown_http_link,
     has_noncanonical_horizontal_rule,
     has_normalized_inline_whitespace,
     has_malformed_percent_encoding,
@@ -268,6 +269,12 @@ def test_has_bare_http_url_accepts_markdown_links():
 def test_has_bare_http_url_rejects_plain_urls():
     assert has_bare_http_url("See https://example.com/project for details.")
     assert has_bare_http_url("See HTTPS://example.com/project for details.")
+
+
+def test_has_markdown_http_link_matches_schemes_case_insensitively():
+    assert has_markdown_http_link("[Project](https://example.com/project)")
+    assert has_markdown_http_link("[Project](HTTPS://example.com/project)")
+    assert not has_markdown_http_link("[Project](#contents)")
 
 
 def test_url_host_ignores_ports_for_placeholder_host_detection():
