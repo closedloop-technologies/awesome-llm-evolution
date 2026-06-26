@@ -215,8 +215,8 @@ def has_encoded_url_path_alias(url: str) -> bool:
     return unquote(path) != path
 
 
-def has_url_path_backslash(url: str) -> bool:
-    return "\\" in urlsplit(url).path
+def has_url_backslash(url: str) -> bool:
+    return "\\" in url
 
 
 def has_url_parent_directory_reference(url: str) -> bool:
@@ -528,8 +528,8 @@ def main() -> int:
                 fail(f"line {index} has a resource URL with encoded control characters: {url}")
             if has_encoded_url_whitespace(url):
                 fail(f"line {index} has a resource URL with encoded whitespace: {url}")
-            if has_url_path_backslash(url):
-                fail(f"line {index} has a resource URL path with backslashes: {url}")
+            if has_url_backslash(url):
+                fail(f"line {index} has a resource URL with backslashes: {url}")
             if has_encoded_url_path_separator(url):
                 fail(f"line {index} has a resource URL with encoded path separators: {url}")
             if has_encoded_url_query_or_fragment_marker(url):

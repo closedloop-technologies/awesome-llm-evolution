@@ -24,7 +24,7 @@ from scripts.check_readme import (
     has_url_host,
     has_url_host_percent_encoding,
     has_valid_url_host_syntax,
-    has_url_path_backslash,
+    has_url_backslash,
     has_url_parent_directory_reference,
     has_url_whitespace,
     has_valid_url_port,
@@ -349,9 +349,11 @@ def test_has_encoded_url_path_alias_rejects_percent_encoded_path_aliases():
     assert has_encoded_url_path_alias("https://example.com/proj%65ct/readme")
 
 
-def test_has_url_path_backslash_rejects_literal_backslashes():
-    assert not has_url_path_backslash("https://example.com/project/readme")
-    assert has_url_path_backslash("https://example.com/project\\readme")
+def test_has_url_backslash_rejects_literal_backslashes():
+    assert not has_url_backslash("https://example.com/project/readme")
+    assert has_url_backslash("https://example.com/project\\readme")
+    assert has_url_backslash("https://example.com\\project")
+    assert has_url_backslash("https://example.com\\@evil.test/project")
 
 
 def test_has_url_parent_directory_reference_rejects_path_traversal():
