@@ -85,7 +85,7 @@ def canonical_url(url: str) -> str:
     try:
         port = parsed.port
     except ValueError:
-        port = None
+        return url
     hostname = (
         parsed.hostname.rstrip(".").casefold()
         if parsed.hostname

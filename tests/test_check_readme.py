@@ -67,6 +67,10 @@ def test_canonical_url_preserves_malformed_url_for_later_validation():
     assert canonical_url("https://[::1/project") == "https://[::1/project"
 
 
+def test_canonical_url_preserves_malformed_port_for_later_validation():
+    assert canonical_url("https://example.com:bad/project") == "https://example.com:bad/project"
+
+
 def test_canonical_url_collapses_repeated_path_slashes():
     assert canonical_url("https://example.com//project///paper/") == "https://example.com/project/paper"
 
