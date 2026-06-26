@@ -17,6 +17,7 @@ from scripts.check_readme import (
     has_encoded_url_path_separator,
     has_parseable_url,
     has_trailing_whitespace,
+    has_markdown_http_url,
     has_url_credentials,
     has_url_current_directory_reference,
     has_url_host,
@@ -261,6 +262,12 @@ def test_has_bare_http_url_accepts_markdown_links():
 def test_has_bare_http_url_rejects_plain_urls():
     assert has_bare_http_url("See https://example.com/project for details.")
     assert has_bare_http_url("See HTTPS://example.com/project for details.")
+
+
+def test_has_markdown_http_url_detects_uppercase_schemes():
+    assert has_markdown_http_url("[Project](https://example.com/project)")
+    assert has_markdown_http_url("[Project](HTTPS://example.com/project)")
+    assert not has_markdown_http_url("[Section](#contents)")
 
 
 def test_url_host_ignores_ports_for_placeholder_host_detection():

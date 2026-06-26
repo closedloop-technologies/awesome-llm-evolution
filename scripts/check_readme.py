@@ -244,6 +244,10 @@ def has_bare_http_url(line: str) -> bool:
     return False
 
 
+def has_markdown_http_url(line: str) -> bool:
+    return bool(re.search(r"\]\(https?://", line, flags=re.IGNORECASE))
+
+
 def duplicate_values(values: list[str]) -> list[str]:
     return sorted(value for value, count in Counter(values).items() if count > 1)
 
@@ -472,7 +476,7 @@ def main() -> int:
     for index, line in enumerate(lines, start=1):
         if has_bare_http_url(line):
             fail(f"line {index} has a bare HTTP URL")
-        if "](http" in line and "https://awesome.re/badge.svg" not in line:
+        if has_markdown_http_url(line) and "https://awesome.re/badge.svg" not in line:
             if not ENTRY_RE.match(line):
                 fail(f"line {index} has a non-entry HTTP link")
         entry = ENTRY_RE.match(line)
