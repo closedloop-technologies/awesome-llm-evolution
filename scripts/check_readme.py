@@ -223,7 +223,15 @@ def has_encoded_url_control_character(url: str) -> bool:
 
 
 def has_malformed_percent_encoding(url: str) -> bool:
-    return bool(MALFORMED_PERCENT_ENCODING_RE.search(url))
+    decoded = url
+    for _ in range(3):
+        if MALFORMED_PERCENT_ENCODING_RE.search(decoded):
+            return True
+        previous = decoded
+        decoded = unquote(previous)
+        if decoded == previous:
+            return False
+    return bool(MALFORMED_PERCENT_ENCODING_RE.search(decoded))
 
 
 def fully_unquote(value: str) -> str:

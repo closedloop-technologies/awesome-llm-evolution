@@ -341,6 +341,7 @@ def test_has_malformed_percent_encoding_rejects_incomplete_escapes():
     assert has_malformed_percent_encoding("https://example.com/project%")
     assert has_malformed_percent_encoding("https://example.com/project%2")
     assert has_malformed_percent_encoding("https://example.com/project%zz")
+    assert has_malformed_percent_encoding("https://example.com/project%25zz")
 
 
 def test_has_encoded_url_whitespace_rejects_percent_encoded_spaces_and_tabs():
