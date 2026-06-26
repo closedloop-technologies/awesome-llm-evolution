@@ -20,6 +20,7 @@ from scripts.check_readme import (
     has_url_credentials,
     has_url_current_directory_reference,
     has_url_host,
+    has_url_host_percent_encoding,
     has_url_path_backslash,
     has_url_parent_directory_reference,
     has_url_whitespace,
@@ -221,6 +222,12 @@ def test_url_host_ignores_ports_for_placeholder_host_detection():
 def test_has_url_host_rejects_hostless_urls():
     assert has_url_host("https://example.com/project")
     assert not has_url_host("https:///project")
+
+
+def test_has_url_host_percent_encoding_rejects_encoded_hosts():
+    assert not has_url_host_percent_encoding("https://example.com/project")
+    assert has_url_host_percent_encoding("https://%6cocalhost/project")
+    assert has_url_host_percent_encoding("https://%65xample.com/project")
 
 
 def test_has_url_credentials_rejects_embedded_credentials():

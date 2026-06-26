@@ -161,6 +161,10 @@ def has_url_host(url: str) -> bool:
     return bool(url_host(url))
 
 
+def has_url_host_percent_encoding(url: str) -> bool:
+    return "%" in (urlsplit(url).hostname or "")
+
+
 def has_url_credentials(url: str) -> bool:
     parsed = urlsplit(url)
     return parsed.username is not None or parsed.password is not None
@@ -480,6 +484,8 @@ def main() -> int:
             host = url_host(url)
             if not host:
                 fail(f"line {index} has a resource URL without a host: {url}")
+            if has_url_host_percent_encoding(url):
+                fail(f"line {index} has a resource URL with an encoded host: {url}")
             if not has_valid_url_port(url):
                 fail(f"line {index} has a resource URL with an invalid port: {url}")
             if has_url_credentials(url):
