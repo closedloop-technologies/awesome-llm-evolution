@@ -4,9 +4,10 @@
 from __future__ import annotations
 
 import re
+import socket
 import sys
 from collections import Counter
-from ipaddress import ip_address
+from ipaddress import IPv4Address, ip_address
 from pathlib import Path
 from urllib.parse import parse_qsl, unquote, urlencode, urlsplit, urlunsplit
 
@@ -221,13 +222,26 @@ def is_placeholder_host(host: str) -> bool:
     )
 
 
+def parse_legacy_ipv4_address(host: str) -> IPv4Address | None:
+    try:
+        packed_address = socket.inet_aton(host)
+    except OSError:
+        return None
+    try:
+        return IPv4Address(packed_address)
+    except ValueError:
+        return None
+
+
 def is_local_resource_host(host: str) -> bool:
     if host in LOCAL_RESOURCE_HOSTS:
         return True
     try:
         address = ip_address(host)
     except ValueError:
-        return False
+        address = parse_legacy_ipv4_address(host)
+        if address is None:
+            return False
     return (
         address.is_private
         or address.is_loopback

@@ -369,6 +369,10 @@ def test_is_placeholder_host_accepts_real_hosts():
 def test_is_local_resource_host_rejects_local_only_hosts():
     assert is_local_resource_host("localhost")
     assert is_local_resource_host("127.0.0.1")
+    assert is_local_resource_host("2130706433")
+    assert is_local_resource_host("0x7f000001")
+    assert is_local_resource_host("017700000001")
+    assert is_local_resource_host("127.1")
     assert is_local_resource_host("0.0.0.0")
     assert is_local_resource_host("::1")
     assert is_local_resource_host("10.0.0.1")
