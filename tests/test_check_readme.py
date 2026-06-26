@@ -306,6 +306,7 @@ def test_has_valid_url_host_syntax_rejects_malformed_dns_labels():
     assert not has_valid_url_host_syntax("-bad.example")
     assert not has_valid_url_host_syntax("bad-.example")
     assert not has_valid_url_host_syntax("bad..example")
+    assert not has_valid_url_host_syntax("example.123")
     assert not has_valid_url_host_syntax("example")
 
 
