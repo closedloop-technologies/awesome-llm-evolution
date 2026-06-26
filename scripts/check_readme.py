@@ -201,8 +201,15 @@ def has_url_whitespace(url: str) -> bool:
 
 
 def has_encoded_url_control_character(url: str) -> bool:
-    decoded = unquote(url)
-    return any(ord(character) < 32 or ord(character) == 127 for character in decoded)
+    decoded = url
+    for _ in range(3):
+        previous = decoded
+        decoded = unquote(previous)
+        if any(ord(character) < 32 or ord(character) == 127 for character in decoded):
+            return True
+        if decoded == previous:
+            return False
+    return False
 
 
 def has_malformed_percent_encoding(url: str) -> bool:

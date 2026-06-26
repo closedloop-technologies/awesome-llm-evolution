@@ -333,6 +333,7 @@ def test_has_encoded_url_control_character_rejects_percent_encoded_controls():
     assert not has_encoded_url_control_character("https://example.com/project")
     assert has_encoded_url_control_character("https://example.com/project%00name")
     assert has_encoded_url_control_character("https://example.com/project%7fname")
+    assert has_encoded_url_control_character("https://example.com/search?q=%2500")
 
 
 def test_has_malformed_percent_encoding_rejects_incomplete_escapes():
