@@ -24,6 +24,7 @@ from scripts.check_readme import (
     has_url_whitespace,
     has_valid_url_port,
     is_placeholder_host,
+    is_local_resource_host,
     is_canonical_resource_url,
     is_title_case,
     markdown_spacing_violations,
@@ -286,6 +287,17 @@ def test_is_placeholder_host_rejects_example_subdomains():
 
 def test_is_placeholder_host_accepts_real_hosts():
     assert not is_placeholder_host("github.com")
+
+
+def test_is_local_resource_host_rejects_local_only_hosts():
+    assert is_local_resource_host("localhost")
+    assert is_local_resource_host("127.0.0.1")
+    assert is_local_resource_host("0.0.0.0")
+    assert is_local_resource_host("::1")
+
+
+def test_is_local_resource_host_accepts_public_hosts():
+    assert not is_local_resource_host("github.com")
 
 
 def test_entry_parser_accepts_http_urls_for_explicit_https_validation():

@@ -20,6 +20,7 @@ ENTRY_LINK_RE = ENTRY_RE
 CONTENTS_LINK_RE = re.compile(r"^- \[([^\]]+)\]\(#([^)]+)\)$")
 PLACEHOLDERS = ("[DOMAIN HERE]", "[more domain-specific tags]")
 PLACEHOLDER_HOSTS = {"example.com", "example.org", "example.net"}
+LOCAL_RESOURCE_HOSTS = {"0.0.0.0", "127.0.0.1", "::1", "localhost"}
 TRACKING_QUERY_PARAMS = {"fbclid", "gclid", "igshid", "mc_cid", "mc_eid", "ref", "ref_src"}
 TRACKING_QUERY_PREFIXES = ("utm_",)
 ENCODED_PATH_SEPARATOR_RE = re.compile(r"%2f|%5c", re.IGNORECASE)
@@ -197,6 +198,10 @@ def is_placeholder_host(host: str) -> bool:
     return host in PLACEHOLDER_HOSTS or any(
         host.endswith(f".{placeholder}") for placeholder in PLACEHOLDER_HOSTS
     )
+
+
+def is_local_resource_host(host: str) -> bool:
+    return host in LOCAL_RESOURCE_HOSTS
 
 
 def is_title_case(heading: str) -> bool:
@@ -463,6 +468,8 @@ def main() -> int:
                 fail(f"line {index} has a resource URL with embedded credentials: {url}")
             if is_placeholder_host(host):
                 fail(f"line {index} uses a placeholder URL host: {host}")
+            if is_local_resource_host(host):
+                fail(f"line {index} uses a local-only URL host: {host}")
             if not is_canonical_resource_url(url):
                 fail(f"line {index} has a non-canonical resource URL: {url}")
     duplicates = sorted(
