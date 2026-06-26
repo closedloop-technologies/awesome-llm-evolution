@@ -157,6 +157,10 @@ def has_encoded_url_control_character(url: str) -> bool:
     return any(ord(character) < 32 or ord(character) == 127 for character in decoded)
 
 
+def has_encoded_url_whitespace(url: str) -> bool:
+    return any(character.isspace() for character in unquote(url))
+
+
 def has_encoded_url_path_separator(url: str) -> bool:
     return bool(ENCODED_PATH_SEPARATOR_RE.search(urlsplit(url).path))
 
@@ -406,6 +410,8 @@ def main() -> int:
                 fail(f"line {index} has a resource URL with whitespace: {url}")
             if has_encoded_url_control_character(url):
                 fail(f"line {index} has a resource URL with encoded control characters: {url}")
+            if has_encoded_url_whitespace(url):
+                fail(f"line {index} has a resource URL with encoded whitespace: {url}")
             if has_url_path_backslash(url):
                 fail(f"line {index} has a resource URL path with backslashes: {url}")
             if has_encoded_url_path_separator(url):
