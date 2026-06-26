@@ -260,6 +260,7 @@ def test_has_bare_http_url_accepts_markdown_links():
 
 def test_has_bare_http_url_rejects_plain_urls():
     assert has_bare_http_url("See https://example.com/project for details.")
+    assert has_bare_http_url("See HTTPS://example.com/project for details.")
 
 
 def test_url_host_ignores_ports_for_placeholder_host_detection():
